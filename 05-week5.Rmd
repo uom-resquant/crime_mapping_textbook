@@ -295,7 +295,7 @@ Also let's get some data. You could go and get this data yourself from police.uk
 We can take our GMP crimes data, and select only the cases from ASB using the crime.type variable. If you want, however, I have already done this, so you can also download from my dropbox using the link here, (or get it from Blackboard): 
 
 ```{r}
-mcr_asb <- read_csv("https://www.dropbox.com/s/93a0ovgcxz6pgiz/manchester_asb.csv?dl=1")
+mcr_asb <-read_csv("data/manchester_asb.csv")
 ```
 
 This is currently just a text dataframe, so we need to let R know that actually this is a spatial object, who's geometry can be find in its longitude and latitude coordinates. As we have long/lat we can assure it's in WGS 84 projection. 
@@ -487,8 +487,14 @@ Let's explore this using the example of the results of the 2016 EU referendum at
 
 You can download the full set of EU referendum result data as a csv from [the Electoral Commission webside](https://www.electoralcommission.org.uk/find-information-by-subject/elections-and-referendums/past-elections-and-referendums/eu-referendum/eu-referendum-result-visualisations). Let's read it straight into R: 
 
-```{r}
+```{r, eval = FALSE}
 eu_ref <- read_csv("https://www.electoralcommission.org.uk/sites/default/files/2019-07/EU-referendum-result-data.csv")
+
+```
+
+```{r, echo=FALSE}
+
+eu_ref <- read_csv("data/EU-referendum-result-data.csv")
 ```
 
 OKAY, now we need a shapefile to join it to. Remember when we got the Manchester lsoa shapefile with the [boundary selector](https://borders.ukdataservice.ac.uk/bds.html)? Let's go back, and this time get *Local Authority Districts* for *England*. 
@@ -535,13 +541,13 @@ Now we can make our own as well, using the cartogram package.
 library(cartogram)
 ```
 
-Within that there is the `cartogram()` function, which takes 2 arguments, 1 - the shape file (it can be a SpatialPolygonDataFrame or an sf object), and 2 - the variable which it should use to distort the polygon by. 
+Within that there is the `cartogram_cont()` function, which takes 2 arguments, 1 - the shape file (it can be a SpatialPolygonDataFrame or an sf object), and 2 - the variable which it should use to distort the polygon by. 
 
 In our data set we have a variable "electorate" which refers to the total number of registered electors, which we will use to distort the polygons:
 
 ```{r, eval = FALSE}
 # construct a cartogram using the size of the electorate in each LA
-eu_cartogram <- cartogram(eu_sf, "Electorate")
+eu_cartogram <- cartogram_cont(eu_sf, "Electorate")
 ```
 
 Again this is some labour intensive work, much like the grid making, you have some time to chill now. Maybe read up on the maths behind this tranformation as well, in the paper [Dougenik, J. A., Chrisman, N. R., & Niemeyer, D. R. (1985). An Algorithm To Construct Continuous Area Cartograms. In The Professional Geographer, 37(1), 75-81.](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.0033-0124.1985.00075.x). 

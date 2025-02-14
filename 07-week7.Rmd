@@ -149,7 +149,7 @@ We will use familiar code to clip the spatial object with the counts of burglari
 
 ```{r}
 #Read a geojson file with Manchester wards
-manchester_ward <- st_read("https://raw.githubusercontent.com/eonk/cm_book/main/data/wards.geojson")
+manchester_ward <- st_read("data/wards.geojson")
 #Create a new object that only has the city centre ward
 df1 <- manchester_ward %>%
   filter(wd16nm == "City Centre")
@@ -173,7 +173,6 @@ tm_shape(cc_burglary) +
   ) +
   tm_borders() +
   tm_title("Burglary counts", size = 0.7) +
-  tm_legend(title.size = 0.8) +
   tm_view(legend.position = c("right", "top"))
 
 ```
@@ -362,11 +361,10 @@ tmap_mode("plot")
 tm_shape(burglaries_per_lsoa) + 
   tm_fill(
     "burglary",
-    fill.scale = tm_scale_intervals(style = "quantile", values = "brewer.reds")
-  ) +
+    fill.scale = tm_scale_intervals(style = "quantile", values = "brewer.reds"), 
+    fill.legend = tm_legend(position = c("right", "bottom"), title.size = 0.8)) +
   tm_borders(col_alpha = 0.1) +
-  tm_title("Burglary counts", size = 0.7) +
-  tm_legend(position = c("right", "bottom"), title.size = 0.8)
+  tm_title("Burglary counts", size = 0.7) 
 
 ```
 
