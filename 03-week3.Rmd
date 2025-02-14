@@ -129,10 +129,10 @@ Notice as well that the legend in this map is (a) not very informative and (b) l
 
 ```{r}
 tm_shape(manchester_crime_lsoa) + 
-  tm_fill("count") +
+  tm_fill("count", 
+          fill.legend = tm_legend(title = "Crime counts", position = c("right", "bottom"), title.size = 0.8)) +
   tm_borders(col_alpha = 0.1) +
-  tm_title(text = "Crime in Manchester City, June/2019", size = 0.7 ) +
-  tm_legend(title = "Crime counts", position = c("right", "bottom"), title.size = 0.8)
+  tm_title(text = "Crime in Manchester City, June/2019", size = 0.7 )
 ```
 
 We can also change the cstyle of the maps by making them more friendly to colour blind people, or to see what they will look like printed by using the "bw" theme (black and white). 
@@ -148,10 +148,11 @@ See how the map changes.
 ```{r}
 
 tm_shape(manchester_crime_lsoa) + 
-  tm_fill("count") +
+  tm_fill("count", 
+          fill.legend = tm_legend(title = "Crime counts", position = c("right", "bottom"), title.size = 0.8)) +
   tm_borders(col_alpha = 0.1) +
-  tm_title(text = "Crime in Manchester City, June/2019", size = 0.7 ) +
-  tm_legend(title = "Crime counts", position = c("right", "bottom"), title.size = 0.8)
+  tm_title(text = "Crime in Manchester City, June/2019", size = 0.7 )
+
 
 ```
 
@@ -193,14 +194,15 @@ For each map, instead of visualising them one by one, just assign them to a new 
 So let's make *map1*. This will create a thematic map using equal intervals:
 
 ```{r}
+legend <- tm_legend(
+            position = c("right", "bottom"),
+            title.size = 0.8,
+            text.size = 0.5
+          ) # Legend to use in all maps
+
 map1 <- tm_shape(manchester_crime_lsoa) +  # Specify spatial object
-  tm_fill("count", fill.scale = tm_scale_intervals(style="equal")) +  # Define fill variable and classification
-  tm_title("Equal") + 
-  tm_legend(
-    position = c("right", "bottom"),
-    title.size = 0.8,
-    text.size = 0.5
-  )  # Adjust legend properties
+  tm_fill("count", fill.scale = tm_scale_intervals(style="equal"), fill.legend = legend) +  # Define fill variable and classification, set legend
+  tm_title("Equal")
 
 ```
 
@@ -208,14 +210,8 @@ Now create *map2*, with the jenks method often preferred by geographers:
 
 ```{r}
 map2 <- tm_shape(manchester_crime_lsoa) +  # Specify spatial object
-  tm_fill("count", fill.scale = tm_scale_intervals(style="jenks")) +  # Define fill variable and classification
-  tm_title("Jenks") + 
-  tm_legend(
-    position = c("right", "bottom"),
-    title.size = 0.8,
-    text.size = 0.5
-  )  # Adjust legend properties
-
+  tm_fill("count", fill.scale = tm_scale_intervals(style="jenks"), fill.legend = legend) +  # Define fill variable and classification, set legend
+  tm_title("Jenks")
 ```
 
 Now create *map3*, with the quantile method often preferred by epidemiologists:
@@ -224,14 +220,8 @@ Now create *map3*, with the quantile method often preferred by epidemiologists:
 ```{r}
 
 map3 <- tm_shape(manchester_crime_lsoa) +
-  tm_fill("count", fill.scale = tm_scale_intervals(style="quantile")) +
-  tm_title("Quantile") + 
-  tm_legend(
-    position = c("right", "bottom"),
-    title.size = 0.8,
-    text.size = 0.5
-  )  
-
+  tm_fill("count", fill.scale = tm_scale_intervals(style="quantile"), fill.legend = legend) + 
+  tm_title("Quantile")
 
 ```
 
@@ -241,14 +231,8 @@ And finally make *map4*, standard deviation map, which maps the values of our va
 
 ```{r}
 map4 <- tm_shape(manchester_crime_lsoa) +
-  tm_fill("count", fill.scale = tm_scale_intervals(style="sd")) +
-  tm_title("Standard Deviation") + 
-  tm_legend(
-    position = c("right", "bottom"),
-    title.size = 0.8,
-    text.size = 0.5
-  )
-
+  tm_fill("count", fill.scale = tm_scale_intervals(style="sd"), fill.legend = legend) + 
+  tm_title("Standard Deviation")
 ```
 
 Notice that we are not plotting the maps, we are storing them into R objects (map1 to map4). This way they are saved, and you can call them later, which is what we need in order to plot them together using the `tmap_arrange()` function. 
@@ -283,7 +267,7 @@ First thing you see is that we loose the context (provided by the polygon border
 
 ```{r}
 tm_shape(manchester_crime_lsoa) +                         #use tm_shape function to specify spatial object
-  tm_bubbles("count", border.lwd = NA) +              #use tm_bubbles to add the bubble visualisation, but set the 'border.lwd' parameter to NA, meaning no symbol borders are drawn
+  tm_bubbles("count", lwd = NA) +              #use tm_bubbles to add the bubble visualisation, but set the 'border.lwd' parameter to NA, meaning no symbol borders are drawn
   tm_borders(col_alpha = 0.1) +                           #add the LSOA border outlines using tm_borders, but set their transparency using the cl_alpha parameter (0 is totally transparent, 1 is not at all)
   tm_layout(
     legend.position = c("right", "bottom"),
@@ -423,14 +407,14 @@ res_pop_map <- tm_shape(manchester_crime_lsoa) +
   
 
 crime_rate_map <- tm_shape(manchester_crime_lsoa) + 
-  tm_fill("crimr1", fill.scale = tm_scale_intervals(values = "brewer.reds"), 
+  tm_fill("crimr1", 
+          fill.scale = tm_scale_intervals(values = "brewer.reds"), 
           fill.legend = tm_legend(
-      title = "Crimes per 100000 daytime population",
-      position = c("right", "bottom"),
-      title.size = 0.8,
-      text.size = 0.5)) + 
-  tm_title("Crime rate") + 
-  tm_legend(position = c("right", "bottom"), title.size = 0.8, text.size = 0.5)
+            title = "Crimes per 100000 daytime population",
+            position = c("right", "bottom"),
+            title.size = 0.8,
+            text.size = 0.5)) + 
+  tm_title("Crime rate")
 
 tmap_arrange(crime_count_map, res_pop_map, crime_rate_map)
 
