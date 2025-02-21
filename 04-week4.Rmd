@@ -557,4 +557,11 @@ leaflet(crimes_per_prem) %>%
             title = 'Violent crimes', position = "bottomleft") 
 ```
 
-It's not the neatest of maps, with all these overlaps, but we can talk about prettifying maps another day. You've done enough today."m1
+It's not the neatest of maps, with all these overlaps, but we can talk about prettifying maps another day. You've done enough today.
+
+## Summary
+
+In this week we explored the differences between attribute and spatial operations, and we made great use of the latter in practicing **spatial manipulation of data**. These spatial operations allow us to manipulate our data in a way that lets us study what is going on with crime at micro-places. We introduced the idea of different crime places. Make sure to refer to the readings about crime attractors vs. crime generators, as well as developments, for example about crime radiators and absorbers as well.
+
+We covered how to subset points within an area, build buffers around geometries, count the number of points in a point layer that fall within each polygon in a polygon layer, and turn non-spatial information such as an address into something we can map using geocoding. These spatial operations are just some of many, but we chose to cover as they have the most frequent application in crime analysis. 
+

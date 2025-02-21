@@ -84,6 +84,7 @@ meet-a-new-format-of-shapefile-geojson
 activity-5-subset-points-to-those-within-a-polygon
 activity-6-building-buffers
 activity-7-counting-points-in-polygon
+summary-3
 more-on-thematic-maps
 pro-tip-do-i-need-to-install-this-package
 smoothing-rates-adjusting-for-small-sample-noise
