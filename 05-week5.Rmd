@@ -385,7 +385,8 @@ ggplot(sf_mcr_asb, aes(x = lng, y = lat)) +
                  geom = "polygon") +  # creates the bands of different colors
   ## Configure the colors, transparency and panel
   scale_fill_gradientn(colours = c("white","red"), 
-                       name = "Frequency") 
+                       name = "Frequency")  +
+  scale_alpha(guide = "none")
 ```
 
 Look at the difference between the three maps (hex, rectangle, and density). How would your conclusions change if you were given these maps? Would you make different decisions about where to place your booths for the days of action? Why or why not? Discuss.
