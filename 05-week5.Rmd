@@ -187,8 +187,7 @@ We can observe that the dispersion narrows significantly and that there are fewe
 Instead of shrinking to the global relative risk, we can shrink to a relative rate based on the neighbours of each county. Shrinking to the global risk ignores the spatial dimension of the phenomenon being mapped out and may mask existing heterogeneity. If instead of shrinking to a global risk, we shrink to a local rate, we may be able to take unobserved heterogeneity into account. @Marshall_1991 proposed a local smoother estimator in which the crude rate is shrunk towards a local, "neighbourhood", rate. To compute this, we need the list of neighbours that surround each county (we will discuss this code in Chapter 11, so for now just trust we are computing the rate of the areas that surround each country):
 
 ```{r, message=FALSE, warning=FALSE}
-ncovr_sp <- as(ncovr, "Spatial")
-w_nb <- poly2nb(ncovr_sp, row.names=ncovr_sp$FIPSNO)
+w_nb <- poly2nb(ncovr, row.names=ncovr_sp$FIPSNO)
 eb2 <- EBlocal(ncovr$HC60, ncovr$PO60, w_nb)
 ncovr$HR60EBSL <- eb2$est * 100000
 
