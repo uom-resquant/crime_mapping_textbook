@@ -18,6 +18,7 @@ Before we do any of this, we need to load the libraries we will use today:
 - `tmap`
 - `readxl`
 - `readr`
+- `geodaData`
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 library(sf)
@@ -49,7 +50,7 @@ Why are we telling you this? Well you should always check if you have a package,
 So as a first step, you have to assign a list of all the packages you have to check to an object. Let's say I tell you that today we will be using the following packaes: "sp", "rgdal", "classInt", "RColorBrewer", "ggplot2", "hexbin", "ggmap", "XML", and "dplyr". Then you can add these to an object called `libs`, using the `c()` function: 
 
 ```{r}
-libs <- c("sf", "tmap", "sp", "spdep", "DCluster", "cartogram")
+libs <- c("sp", "rgdal", "classInt", "RColorBrewer", "ggplot2", "hexbin", "ggmap", "XML", "dplyr")
 ```
 
 Now you can run the below bit of code, and you will see in the console an output of what is and isn't installed, as well as install the packages that are not!
