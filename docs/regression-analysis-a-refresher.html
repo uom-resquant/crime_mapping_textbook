@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2025-02-21" />
+<meta name="date" content="2025-02-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -482,7 +482,7 @@ div.csl-indent {
 <p>We will use a dataset that includes information about homicides in the US, as well as information in a number of sociodemographic variables that are often thought of as associated with the geographical distribution of homicides. As always, you can download the data from the webpage or it is available on blackboard under the data tab for this week’s learning materials. Is is the file <code>NAT.csv</code> inside the <code>ncovr.zip</code> file (remember you’ll have to extract the zip folder first!).</p>
 <div class="sourceCode" id="cb389"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb389-1"><a href="regression-analysis-a-refresher.html#cb389-1" tabindex="-1"></a>ncovr <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://www.dropbox.com/s/zhn66q5y46dontn/NAT.csv?dl=1&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 3085 Columns: 69
-## ── Column specification ────────────────────────────────────────────────
+## ── Column specification ──────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (5): NAME, STATE_NAME, STATE_FIPS, CNTY_FIPS, FIPS
 ## dbl (64): STFIPS, COFIPS, FIPSNO, SOUTH, HR60, HR70, HR80, HR90, HC60, HC70,...
@@ -492,7 +492,7 @@ div.csl-indent {
 <div class="sourceCode" id="cb391"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb391-1"><a href="regression-analysis-a-refresher.html#cb391-1" tabindex="-1"></a><span class="co">#or, use your local path</span></span>
 <span id="cb391-2"><a href="regression-analysis-a-refresher.html#cb391-2" tabindex="-1"></a>ncovr <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&#39;data/ncovr/NAT.csv&#39;</span>)</span></code></pre></div>
 <pre><code>## Rows: 3085 Columns: 69
-## ── Column specification ────────────────────────────────────────────────
+## ── Column specification ──────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (5): NAME, STATE_NAME, STATE_FIPS, CNTY_FIPS, FIPS
 ## dbl (64): STFIPS, COFIPS, FIPSNO, SOUTH, HR60, HR70, HR80, HR90, HC60, HC70,...
@@ -508,7 +508,8 @@ div.csl-indent {
 <p>The first step in any analysis is to develop some familiarity with the data you are going to be working with. We have been here before. Read the <a href="https://www.dropbox.com/s/7vdhxjm8bq0p3nu/codebook.pdf?dl=1">codebook</a>. Run summary statistics for your quantitative variables, frequency distributions for your categorical variables, and visualise your variables. This will help you to detect any anomalies and give you a sense for what you have. If, for example, you run a histogram for the homicide rate for 1990 (HR90), you will get a sense of the distribution form –which of course is skewed.</p>
 <div class="sourceCode" id="cb393"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb393-1"><a href="regression-analysis-a-refresher.html#cb393-1" tabindex="-1"></a><span class="fu">ggplot</span>(ncovr, <span class="fu">aes</span>(<span class="at">x =</span> HR90)) <span class="sc">+</span> </span>
 <span id="cb393-2"><a href="regression-analysis-a-refresher.html#cb393-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-234-1.png" width="672" /></p>
 <p>We can also look at other variables in our data set. You may wish to use the <code>skim()</code> function from the <code>skimr</code> package maybe, which we introduced all the way back in the first lab!. Once one has gone through the process of exploring the data in this way for all the variables you want to work with, you can start exploring bivariate associations with your dependent variable (also called response or outcome variable). In this case, our outcome variable is homicide rate in the 90s, which we explored in the histogram above (<code>HR90</code>). As an illustration, you could explore the association with resource deprivation (<em>RD90</em>), a measure of the level of concentrated disadvantage or social exclusion in an area, via a scatterplot:</p>
 <div class="sourceCode" id="cb395"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb395-1"><a href="regression-analysis-a-refresher.html#cb395-1" tabindex="-1"></a><span class="fu">ggplot</span>(ncovr, <span class="fu">aes</span>(<span class="at">x =</span> RD90, <span class="at">y =</span> HR90)) <span class="sc">+</span></span>
@@ -535,11 +536,12 @@ div.csl-indent {
 <p>Imagine, however, that now when someone is called to the stage, you are told the resource deprivation level of the county, for example, the resource deprivation score = 4 and ask your expectation on the HR90 value of the country. Would you still go for the value of “4.377 (the median of HR90)” as your best guess for the value of the selected county?</p>
 <p>I certainly would not go with the overall mean or median as my prediction anymore. If somebody said to me, the value <em>RD90</em> for the selected respondent is 4, we would be more inclined to guess the mean value for the level of homicide with that level of resource deprivation (the conditional mean), rather than the overall mean across all the counties. Wouldn’t you?</p>
 <p>If we plot the <strong>conditional means</strong> we can see that the mean of homicide rate for counties that report a value of 4 in <em>RD90</em> is around 22. So you may be better off guessing that.</p>
-<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in
+## ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning
-## was generated.</code></pre>
+## Call `lifecycle::last_lifecycle_warnings()` to see
+## where this warning was generated.</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-238-1.png" width="672" /></p>
 <p>Linear regression tackles this problem using a slightly different approach. Rather than focusing on the conditional mean (smoothed or not), it draws a straight line that tries to capture the trend in the data. If we focus in the region of the scatterplot that are less sparse we see that this is an upward trend, suggesting that as resource deprivation increases so does the homicide rate.</p>
 <p>Simple linear regression draws a single straight line of predicted values as the model for the data. This line would be a <strong>model</strong>, a <em>simplification</em> of the real world like any other model (e.g., a toy pistol, an architectural drawing, a subway map), that assumes that there is approximately a linear relationship between X and Y. Let’s draw the regression line:</p>

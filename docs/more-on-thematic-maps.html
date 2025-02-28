@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2025-02-21" />
+<meta name="date" content="2025-02-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -664,13 +664,15 @@ Figure 5.2: Boxplots to compare variation in rates
 <pre><code>## New names:
 ## Rows: 32162 Columns: 15
 ## ── Column specification
-## ──────────────────────────────────────────────── Delimiter: &quot;,&quot; chr
-## (8): Month, Reported.by, Falls.within, Location, LSOA.code, LSOA.name,
-## C... dbl (4): ...1, X, Longitude, Latitude lgl (3): Crime.ID,
+## ────────────────────────────── Delimiter: &quot;,&quot; chr
+## (8): Month, Reported.by, Falls.within, Location,
+## LSOA.code, LSOA.name, C... dbl (4): ...1, X,
+## Longitude, Latitude lgl (3): Crime.ID,
 ## Last.outcome.category, Context
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet
-## this message.
+## ℹ Use `spec()` to retrieve the full column
+## specification for this data. ℹ Specify the column
+## types or set `show_col_types = FALSE` to quiet this
+## message.
 ## • `` -&gt; `...1`</code></pre>
 <p>This is currently just a text dataframe, so we need to let R know that actually this is a spatial object, who’s geometry can be find in its longitude and latitude coordinates. As we have long/lat we can assure it’s in WGS 84 projection.</p>
 <div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="more-on-thematic-maps.html#cb255-1" tabindex="-1"></a>sf_mcr_asb <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(mcr_asb, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;Longitude&quot;</span>, <span class="st">&quot;Latitude&quot;</span>), </span>
@@ -742,11 +744,12 @@ Figure 5.2: Boxplots to compare variation in rates
 <span id="cb264-6"><a href="more-on-thematic-maps.html#cb264-6" tabindex="-1"></a>  <span class="do">## Configure the colors, transparency and panel</span></span>
 <span id="cb264-7"><a href="more-on-thematic-maps.html#cb264-7" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(<span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&quot;white&quot;</span>,<span class="st">&quot;red&quot;</span>), </span>
 <span id="cb264-8"><a href="more-on-thematic-maps.html#cb264-8" tabindex="-1"></a>                       <span class="at">name =</span> <span class="st">&quot;Frequency&quot;</span>) </span></code></pre></div>
-<pre><code>## Warning: The dot-dot notation (`..level..`) was deprecated in ggplot2 3.4.0.
+<pre><code>## Warning: The dot-dot notation (`..level..`) was deprecated in
+## ggplot2 3.4.0.
 ## ℹ Please use `after_stat(level)` instead.
 ## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning
-## was generated.</code></pre>
+## Call `lifecycle::last_lifecycle_warnings()` to see
+## where this warning was generated.</code></pre>
 <pre><code>## Zoom: 11</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-163-1.png" width="672" /></p>
 <p>Look at the difference between the three maps (hex, rectangle, and density). How would your conclusions change if you were given these maps? Would you make different decisions about where to place your booths for the days of action? Why or why not? Discuss.</p>
@@ -833,7 +836,7 @@ aggregation.</li>
 <p>You can download the full set of EU referendum result data as a csv from <a href="https://www.electoralcommission.org.uk/find-information-by-subject/elections-and-referendums/past-elections-and-referendums/eu-referendum/eu-referendum-result-visualisations">the Electoral Commission webside</a>. Let’s read it straight into R:</p>
 <div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="more-on-thematic-maps.html#cb267-1" tabindex="-1"></a>eu_ref <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://www.electoralcommission.org.uk/sites/default/files/2019-07/EU-referendum-result-data.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 382 Columns: 21
-## ── Column specification ────────────────────────────────────────────────
+## ── Column specification ──────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (4): Region_Code, Region, Area_Code, Area
 ## dbl (17): id, Electorate, ExpectedBallots, VerifiedBallotPapers, Pct_Turnout...
