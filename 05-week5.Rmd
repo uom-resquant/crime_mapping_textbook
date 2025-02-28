@@ -18,6 +18,7 @@ Before we do any of this, we need to load the libraries we will use today:
 - `tmap`
 - `readxl`
 - `readr`
+- `geodaData`
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 library(sf)
@@ -49,7 +50,7 @@ Why are we telling you this? Well you should always check if you have a package,
 So as a first step, you have to assign a list of all the packages you have to check to an object. Let's say I tell you that today we will be using the following packaes: "sp", "rgdal", "classInt", "RColorBrewer", "ggplot2", "hexbin", "ggmap", "XML", and "dplyr". Then you can add these to an object called `libs`, using the `c()` function: 
 
 ```{r}
-libs <- c("sf", "tmap", "sp", "spdep", "DCluster", "cartogram")
+libs <- c("sp", "rgdal", "classInt", "RColorBrewer", "ggplot2", "hexbin", "ggmap", "XML", "dplyr")
 ```
 
 Now you can run the below bit of code, and you will see in the console an output of what is and isn't installed, as well as install the packages that are not!
@@ -186,8 +187,7 @@ We can observe that the dispersion narrows significantly and that there are fewe
 Instead of shrinking to the global relative risk, we can shrink to a relative rate based on the neighbours of each county. Shrinking to the global risk ignores the spatial dimension of the phenomenon being mapped out and may mask existing heterogeneity. If instead of shrinking to a global risk, we shrink to a local rate, we may be able to take unobserved heterogeneity into account. @Marshall_1991 proposed a local smoother estimator in which the crude rate is shrunk towards a local, "neighbourhood", rate. To compute this, we need the list of neighbours that surround each county (we will discuss this code in Chapter 11, so for now just trust we are computing the rate of the areas that surround each country):
 
 ```{r, message=FALSE, warning=FALSE}
-ncovr_sp <- as(ncovr, "Spatial")
-w_nb <- poly2nb(ncovr_sp, row.names=ncovr_sp$FIPSNO)
+w_nb <- poly2nb(ncovr, row.names=ncovr_sp$FIPSNO)
 eb2 <- EBlocal(ncovr$HC60, ncovr$PO60, w_nb)
 ncovr$HR60EBSL <- eb2$est * 100000
 
@@ -274,7 +274,7 @@ Binning itself is a general term used to describe the grouping of a dataset's va
 
 You might be thinking, "grouping points into a larger spatial unit, haven't we already done this when making choropleth maps?". In a way you are right. Choropleth maps are another type of map to that uses binning. Proportional symbol and choropleth maps group similar data points together to show a range of data instead of many individual points. We've covered this extensively, and is generally the best approch to consider spatial grouping of your point variables, because the polygons (shapes) to which you are aggregating your points are *meaningful*. You can group into LSOAs because you want to show variation in neighbourhoods. Or you can group into police force areas because you want to look at differences between those units of analysis. But sometimes there is just not a geography present to meet your needs.
 
-Let's say you are conducting some days of action in Manchester city centre, focusing on antisocial behaviour. You are going to put up some information booths and staff them with officers to engage with the local population about antisocial behaviour. For these to be most effective, as an analyst you decide that they should go into the areas with the highest *count* of antisocial beaviour. You want to be very specific about where you put these as well, and so LSOA level would be too broad, you want to zoom in more. One approach can be to split central Manchester into some smaller polygons, and just calculate the number of antisocial behaviour incidents recorded in each. That way you can then decide to put your information booths somewhere inside the top 5 highest count bins. 
+Let's say you are conducting some days of action in Manchester city centre, focusing on antisocial behaviour. You are going to put up some information booths and staff them with officers to engage with the local population about antisocial behaviour. For these to be most effective, as an analyst you decide that they should go into the areas with the highest *count* of antisocial behaviour. You want to be very specific about where you put these as well, and so LSOA level would be too broad, you want to zoom in more. One approach can be to split central Manchester into some smaller polygons, and just calculate the number of antisocial behaviour incidents recorded in each. That way you can then decide to put your information booths somewhere inside the top 5 highest count bins. 
 
 #### Rectangular binning 
 
@@ -295,7 +295,7 @@ Also let's get some data. You could go and get this data yourself from police.uk
 We can take our GMP crimes data, and select only the cases from ASB using the crime.type variable. If you want, however, I have already done this, so you can also download from my dropbox using the link here, (or get it from Blackboard): 
 
 ```{r}
-mcr_asb <-read_csv("data/manchester_asb.csv")
+mcr_asb <- read_csv("data/manchester_asb.csv")
 ```
 
 This is currently just a text dataframe, so we need to let R know that actually this is a spatial object, who's geometry can be find in its longitude and latitude coordinates. As we have long/lat we can assure it's in WGS 84 projection. 
@@ -379,12 +379,13 @@ c) a simple "heatmap" (we will discuss these more thoroughly next week):
 ```{r}
 ggplot(sf_mcr_asb, aes(x = lng, y = lat)) + 
   annotation_map_tile() + 
-  stat_density2d(aes(fill = ..level.., # value corresponding to discretized density estimates 
-                     alpha = ..level..), 
-                 geom = "polygon") +  # creates the bands of differenc colors
+  stat_density2d(aes(fill = after_stat(level), # value corresponding to discretized density estimates 
+                     alpha = after_stat(level)), 
+                 geom = "polygon") +  # creates the bands of different colors
   ## Configure the colors, transparency and panel
   scale_fill_gradientn(colours = c("white","red"), 
-                       name = "Frequency") 
+                       name = "Frequency")  +
+  scale_alpha(guide = "none")
 ```
 
 Look at the difference between the three maps (hex, rectangle, and density). How would your conclusions change if you were given these maps? Would you make different decisions about where to place your booths for the days of action? Why or why not? Discuss.
