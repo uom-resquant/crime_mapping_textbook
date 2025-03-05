@@ -100,7 +100,7 @@ In the point pattern analysis literature each point is often referred to as an *
 
 ### Activity 1: Getting the data into spatstat: the problem with duplicates
 
-So let's start using spatstat.The first thing we need to do is to transform our `sf` object into a `ppp` object which is how `spatstat` likes to store its point patterns. Unfortunately, spatstat and many other packages for analysis of spatial data precede `sf`, so the transformation is a bit awkard. Also before we do that, it is important to realise that a point pattern is defined as a series of events in a given area, or window, of observation. It is therefore extremely important to precisely define this *window*. In `spatstat` the function `owin()` is used to set the observation window. However, the standard function takes the coordinates of a rectangle or of a polygon from a matrix, and therefore it may be a bit tricky to use. Luckily the package `maptools` provides a way to transform a `SpatialPolygons` into an object of class `owin`, using the function `as.owin()`. Here are the steps: 
+So let's start using spatstat.The first thing we need to do is to transform our `sf` object into a `ppp` object which is how `spatstat` likes to store its point patterns. Unfortunately, spatstat and many other packages for analysis of spatial data precede `sf`, so the transformation is a bit awkward. Also before we do that, it is important to realise that a point pattern is defined as a series of events in a given area, or window, of observation. It is therefore extremely important to precisely define this *window*. In `spatstat` the function `owin()` is used to set the observation window. However, the standard function takes the coordinates of a rectangle or of a polygon from a matrix, and therefore it may be a bit tricky to use. Luckily the package `maptools` provides a way to transform a `SpatialPolygons` into an object of class `owin`, using the function `as.owin()`. Here are the steps: 
 
 First we transform the CRS of our 'Falllowfield' polygon into projected coordinates (British National Grid) as opposed to geographic coordinates (WGS84) :
 
@@ -121,7 +121,7 @@ class(window)
 window
 ```
 
-Now that we have created the window as an `owin` object let's get the points. First we will extract the coordinates from our sf point data into a matrix:
+Now that we have created the window as an `owin` object let's get the points. First we will extract the coordinates from our `sf` point data into a matrix:
 
 ```{r}
 #we must transform these too to match our window in BNG
@@ -216,7 +216,7 @@ In classical literature, the *homogeneous Poisson process* (CSR) is usually take
 quadrat.test(jitter_bur, nx = 3, ny = 2)
 ```
 
-Observing the results we see that the p value is well below convential standards for rejection of the null hypothesis ($\alpha = 0.05$). Observing our data of burglary in Fallowfield would be extremely rare if the null hypothesis was true. We can then conclude that the burglary data is not randomly distributed in the observed space. But no cop nor criminologist would really question this. They would rarely be surprised by your findings! We do know that crime is not randomly distributed in space. 
+Observing the results we see that the p value is well below conventional standards for rejection of the null hypothesis ($\alpha = 0.05$). Observing our data of burglary in Fallowfield would be extremely rare if the null hypothesis was true. We can then conclude that the burglary data is not randomly distributed in the observed space. But no cop nor criminologist would really question this. They would rarely be surprised by your findings! We do know that crime is not randomly distributed in space. 
 
 ## Density estimates
 
@@ -237,7 +237,7 @@ The values that we attribute to the cells in crime mapping will typically refer 
 
 ### Activity 3: Density maps
 
-Let's produce one of this density maps:
+Let's produce one of these density maps:
 
 ```{r}
 ds <- density(jitter_bur)
@@ -249,7 +249,7 @@ The density function is estimating a kernel density estimate. Density is nothing
 
 To perform this analysis in R we need to define the **bandwidth** of the density estimation, which basically determines the area of influence of the estimation. There is no general rule to determine the correct bandwidth; generally speaking if the bandwidth is too small the estimate is too noisy, while if bandwidth is too high the estimate may miss crucial elements of the point pattern due to oversmoothing (Scott, 2009). 
 
-The key argument to pass to the density method for point pattern objects is `sigma=`, which determines the bandwidth of the kernel. In spatstat the functions `bw.diggle()`, `bw.ppl()`, and `bw.scott()` can be used to estimate the bandwidth according to difference methods. The helpfiles recommend the use of the first two. These functions run algorithms that aim to select an appropriate bandwith.
+The key argument to pass to the density method for point pattern objects is `sigma=`, which determines the bandwidth of the kernel. In spatstat the functions `bw.diggle()`, `bw.ppl()`, and `bw.scott()` can be used to estimate the bandwidth according to different methods. The helpfiles recommend the use of the first two. These functions run algorithms that aim to select an appropriate bandwith.
 
 ```{r}
 bw.diggle(jitter_bur)
@@ -271,7 +271,7 @@ plot(density.ppp(jitter_bur, sigma = bw.scott(jitter_bur)[1],edge=T),
      main=paste("scott 2"))
 ```
 
-Baddeley et (2016) suggest the use of the `bw.ppl()` algorithm because in their experience it tends to produce the more appropriate values when the pattern consists predominantly of tight clusters. But they also insist that if your purpose it to detect a single tight cluster in the midst of random noise then the `bw.diggle()` method seems to work best.
+Baddeley et (2016) suggest the use of the `bw.ppl()` algorithm because in their experience it tends to produce the more appropriate values when the pattern consists predominantly of tight clusters. But they also insist that if your purpose is to detect a single tight cluster in the midst of random noise then the `bw.diggle()` method seems to work best.
 
 Apart from selecting the bandwidth we also need to specify the particular kernel we will use. In density estimation there are different types of kernel (as illustrated below):
 
