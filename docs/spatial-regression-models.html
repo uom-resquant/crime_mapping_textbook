@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2025-02-21" />
+<meta name="date" content="2025-02-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -488,7 +488,7 @@ div.csl-indent {
 <span id="cb455-8"><a href="spatial-regression-models.html#cb455-8" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="st">&quot;Homicide Rate across US Counties, 1990&quot;</span>, <span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
 <span id="cb455-9"><a href="spatial-regression-models.html#cb455-9" tabindex="-1"></a>  <span class="fu">tm_legend</span>(<span class="at">position =</span> <span class="fu">c</span>(<span class="st">&quot;right&quot;</span>, <span class="st">&quot;bottom&quot;</span>), <span class="at">title.size =</span> <span class="fl">0.8</span>)</span></code></pre></div>
 <pre><code>## </code></pre>
-<pre><code>## ── tmap v3 code detected ───────────────────────────────────────────────</code></pre>
+<pre><code>## ── tmap v3 code detected ─────────────────────────────</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-270-1.png" width="672" /></p>
 <p>Do you think there is spatial patterning for homicide?</p>
 </div>
@@ -528,11 +528,12 @@ div.csl-indent {
 <span id="cb463-10"><a href="spatial-regression-models.html#cb463-10" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="st">&quot;Residuals&quot;</span>, <span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
 <span id="cb463-11"><a href="spatial-regression-models.html#cb463-11" tabindex="-1"></a>  <span class="fu">tm_legend</span>(<span class="at">position =</span> <span class="fu">c</span>(<span class="st">&quot;right&quot;</span>, <span class="st">&quot;bottom&quot;</span>), <span class="at">title.size =</span> <span class="fl">0.8</span>)</span></code></pre></div>
 <pre><code>## </code></pre>
-<pre><code>## ── tmap v3 code detected ───────────────────────────────────────────────</code></pre>
+<pre><code>## ── tmap v3 code detected ─────────────────────────────</code></pre>
 <pre><code>## [scale] tm_polygons:() the data variable assigned to &#39;fill&#39; contains positive and negative values, so midpoint is set to 0. Set &#39;midpoint = NA&#39; in &#39;fill.scale = tm_scale_intervals(&lt;HERE&gt;)&#39; to use all visual values (e.g. colors)</code></pre>
-<pre><code>## [cols4all] color palettes: use palettes from the R package cols4all.
-## Run `cols4all::c4a_gui()` to explore them. The old palette name
-## &quot;brewer.RdBu&quot; is named &quot;rd_bu&quot; (in long format &quot;brewer.rd_bu&quot;)</code></pre>
+<pre><code>## [cols4all] color palettes: use palettes from the R
+## package cols4all. Run `cols4all::c4a_gui()` to
+## explore them. The old palette name &quot;brewer.RdBu&quot; is
+## named &quot;rd_bu&quot; (in long format &quot;brewer.rd_bu&quot;)</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-275-1.png" width="672" /></p>
 <p>Notice the spatial patterning of areas of over-prediction (negative residuals, or blue tones) and under-prediction (positive residuals, or brown tones). This visual inspection of the residuals is telling you that spatial autocorrelation may be present here. This, however, would require a more formal test.</p>
 </div>
@@ -877,13 +878,15 @@ div.csl-indent {
 <pre><code>## New names:
 ## Rows: 32162 Columns: 15
 ## ── Column specification
-## ──────────────────────────────────────────────── Delimiter: &quot;,&quot; chr
-## (8): Month, Reported.by, Falls.within, Location, LSOA.code, LSOA.name,
-## C... dbl (4): ...1, X, Longitude, Latitude lgl (3): Crime.ID,
+## ────────────────────────────── Delimiter: &quot;,&quot; chr
+## (8): Month, Reported.by, Falls.within, Location,
+## LSOA.code, LSOA.name, C... dbl (4): ...1, X,
+## Longitude, Latitude lgl (3): Crime.ID,
 ## Last.outcome.category, Context
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet
-## this message.
+## ℹ Use `spec()` to retrieve the full column
+## specification for this data. ℹ Specify the column
+## types or set `show_col_types = FALSE` to quiet this
+## message.
 ## • `` -&gt; `...1`</code></pre>
 <p>We’ll also need our boundary data. Read in the city centre LSOAs geojson (also on Blackboard) <code>cc_lsoas.geojson</code>.</p>
 <div class="sourceCode" id="cb494"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb494-1"><a href="spatial-regression-models.html#cb494-1" tabindex="-1"></a>cc_lsoas <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/cc_lsoas.geojson&quot;</span>)</span></code></pre></div>
@@ -994,8 +997,8 @@ div.csl-indent {
 <p>Now, finally, we can animate this graph. Take the object of the static graph (anim) and add a form of transition, which will be used to animate the graph. In this case, we can use <code>transition_manual()</code>. This transition splits your data into multiple frames based on the levels in a given column, much like how faceting splits up the data in multiple panels. It then shifts between frames, with each frame representing one level of the frame variable. Frames are the unquoted name of the column holding the frame levels in the data. You can then use <code>current_frame</code> to dynamically label the graph:</p>
 <div class="sourceCode" id="cb510"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb510-1"><a href="spatial-regression-models.html#cb510-1" tabindex="-1"></a>anim <span class="sc">+</span> <span class="fu">transition_manual</span>(date_month) <span class="sc">+</span></span>
 <span id="cb510-2"><a href="spatial-regression-models.html#cb510-2" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Month: {current_frame}&quot;</span>)</span></code></pre></div>
-<pre><code>## Warning: No renderer available. Please install the gifski, av, or magick package
-## to create animated output</code></pre>
+<pre><code>## Warning: No renderer available. Please install the gifski, av,
+## or magick package to create animated output</code></pre>
 <pre><code>## NULL</code></pre>
 <p>How cool is that!?</p>
 <p>You can now make animations about transition over time to impress your friends, family, future employers, and so on. What a way to end this course!</p>
