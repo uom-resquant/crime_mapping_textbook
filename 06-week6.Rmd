@@ -48,7 +48,7 @@ You can get both the geojson file of wards and the excel file of crimes from Bla
 
 ```{r}
 #Read a geojson file with Manchester wards (remember we learned about geojson files in week 4).
-manchester_ward <- st_read("https://raw.githubusercontent.com/eonk/cm_book/main/data/wards.geojson")
+manchester_ward <- st_read("data/manchester_ward.geojson")
 
 #step1: create a new object that only has the 'fallowfield' ward
 df1 <- manchester_ward %>%
@@ -319,11 +319,11 @@ class(r1)
 
 Now that we have the raster we can add it to a basemap. 
 
-Two-dimensional `RasterLayer` objects (from the `raster` package) can be turned into images and added to `Leaflet` maps using the `addRasterImage()` function.
+Two-dimensional `SpatRaster` objects (from the `terra` package) can be turned into images and added to `Leaflet` maps using the `addRasterImage()` function.
 
-The `addRasterImage()` function works by projecting the `RasterLayer` object to EPSG:3857 and encoding each cell to an RGBA color, to produce a PNG image. That image is then embedded in the map widget.
+The `addRasterImage()` function works by projecting the `SpatRaster` object to EPSG:3857 and encoding each cell to an RGBA color, to produce a PNG image. That image is then embedded in the map widget.
 
-It’s important that the `RasterLayer` object is tagged with a proper coordinate reference system. Many raster files contain this information, but some do not. Here is how you’d tag a raster layer object “r1” which contains WGS84 data:
+It’s important that the `SpatRaster` object is tagged with a proper coordinate reference system. Many raster files contain this information, but some do not. Here is how you’d tag a raster layer object “r1” which contains WGS84 data:
 
 ```{r, message=FALSE}
 library(leaflet)
