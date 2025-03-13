@@ -12,7 +12,6 @@ We'll be making use of the following packages:
 - `dplyr`
 - `janitor`
 - `sf`
-- `sp`
 - `spdep`
 - `tmap`
 - `readxl`
@@ -23,7 +22,6 @@ library(readxl)
 library(janitor)
 library(tmap)
 library(dplyr)
-library(sp)
 library(spdep)
 ```
 
@@ -42,7 +40,7 @@ manchester_lsoa <- st_read("data/BoundaryData/england_lsoa_2011.shp")
 download.file("https://www.dropbox.com/s/h5c1okn4m6t3rqe/BoundaryData.zip?dl=1" , 
               destfile="data/BoundaryData.zip", # change to your local directory
               mode = "wb")
-#Important! note that I extract file to the data/BoundaryData folder. you HATE TO change exdir (the directory to extract files to)
+#Important! note that I extract file to the data/BoundaryData folder. you HAVE TO change exdir (the directory to extract files to)
 unzip("data/BoundaryData.zip", exdir = "data/BoundaryData")
 manchester_lsoa <- st_read("data/BoundaryData/BoundaryData/england_lsoa_2011.shp")
 ```
@@ -90,7 +88,7 @@ bur_mc <- burglary_spatial[unlist(bur_mc_intersects),]
 plot(st_geometry(bur_mc))
 ```
 
-We now have the burglaries data, let's now count how many burglaries there are within each LSOA polygon. This is a point in polygon operation that we covered in week 4 when we counted the number of violent crimes in the buffers of the licenced premises for example. If the code or the notion does not make much sense to you make sure you review the relevant session from week 4.
+We now have the burglaries data, let's now count how many burglaries there are within each LSOA polygon. This is a point in polygon operation that we covered in week 4 when we counted the number of violent crimes in the buffers of the licensed premises for example. If the code or the notion does not make much sense to you make sure you review the relevant session from week 4.
 
 ```{r message = FALSE, warning = FALSE} 
 #step6: point in polygon spatial operation (be patient this can take time)
@@ -181,13 +179,13 @@ So now we have a new spatial object `cc_burglary` with the 23 LSOA units that co
 
 ### Activity 2: Manually explore neighbours
 
-The id argument in the tm_fill ensures that when you click over any of the areas you get not only the count of burglaries in that LSOA (the quantity we are mapping) gets displayed within a bubble, but you also get to see the code that identifies that LSOA.
+The id argument in the tm_fill ensures that when you click on any of the areas you get not only the count of burglaries in that LSOA (the quantity we are mapping) gets displayed within a bubble, but you also get to see the code that identifies that LSOA.
 
 Move your cursor over the LSOA covering the West of Beswick (E01033688). You will see this area had 34 burglaries in 2019. Using the rook criteria identify the first order neighbors of this LSOA. List their identifiers. Are things different if we use the queen criteria? If so, how does it change? Think and think hard about what the lecture by Luc Anselin discussed. Have you identified *all* the neighbours of this area? (there are multiple ways of answering this question, just make sure you reason your answer).
 
 ## Creating a list of neighbours
 
-It would be very, very tedious having to identify the neighbours of all the areas in our study area by hand, in the way we have done aboce in Activity 2. That's why we love computers. We can automate tedious work so that they do it and we have more time to do fun stuff. We can use code to get the computer to establish what areas are next to each other (if we are using a contiguity based definition of being a neighbour).
+It would be very, very tedious having to identify the neighbours of all the areas in our study area by hand, in the way we have done above in Activity 2. That's why we love computers. We can automate tedious work so that they do it and we have more time to do fun stuff. We can use code to get the computer to establish what areas are next to each other (if we are using a contiguity based definition of being a neighbour).
 
 ### Activity 3: Creating a neighbour list
 
@@ -251,7 +249,7 @@ When our spatial weights matrix looks like this, it is *symmetrical*. That is th
 
 So with  binary coding scheme, we get a spatial influence of 1 if the LSOA is a neighbour, and 0 if it is not a neighbour. But we can also get more informative than that. 
 
-In many computations we will see that the matrix is **row standardised**. We can obtain a row standardise matrix changing the `style=`  parameter to `style='W'`: 
+In many computations we will see that the matrix is **row standardised**. We can obtain a row standardised matrix by changing the `style=`  parameter to `style='W'`: 
 
 ```{r}
 wm_rs <- nb2mat(w, style='W')
@@ -279,7 +277,7 @@ ww
 The most well known measure of spatial autocorrelation is the Moran's I. It was developed by Patrick Alfred Pierce Moran, an Australian statistician. You can find the formula and some explanation in [the wikipedia article](https://en.wikipedia.org/wiki/Moran's_I). The video lecture by Luc Anselin covers an explanation of Moran's I. We strongly recommend you watch the video. You can also find helpful [this link](https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/h-how-spatial-autocorrelation-moran-s-i-spatial-st.htm) if things are still unclear. The formula you see may look intimidating but it is nothing but the formula for standard correlation expanded to incorporate the spatial weight matrix.
 
 
-$ I = \frac{n}{\sum_i \sum_j w_{ij}} * \frac{\sum_i \sum_j * (x_i - \bar{x})(x_j - \bar{x})}{\sum_i(x_i - \bar{x})^2}$
+$$I = \frac{n}{\sum_i \sum_j w_{ij}} \frac{\sum_i \sum_j w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_i(x_i - \bar{x})^2}$$
 
 
 To compute this in R,  we can use the `moran()` function. Have a look at `?moran` to see a description of this in R.
