@@ -349,7 +349,7 @@ In this section we will learn about local indicators of spatial association (LIS
 
 ### Activity 9: Get data and weights for all Manchester 
 
-To explore local indicators of spatial correlation, let's go back to using all of Manchester, rather than just City Centre ward. We want to have enough data to see local variation, and while the code may take slightly longer to run, we can have a go at more meaningful stats. 
+To explore local indicators of spatial correlation, let's go back to using all of Manchester, rather than just the City Centre ward. We want to have enough data to see local variation, and while the code may take slightly longer to run, we can have a go at more meaningful stats. 
 
 So this is our `burglaries_per_lsoa` object that we're referring back to. To check what our data look like, we can always plot again with `tmap`:
 
@@ -365,13 +365,13 @@ tm_shape(burglaries_per_lsoa) +
 
 ```
 
-Looks good! Now that we have the data we can generate the weight matrix. Again, what we do here is stuff we did above for the global correlation. In fact, if you did the optional homework already, you will also have run this code.
+Looks good! Now that we have the data we can generate the weight matrix. Again, what we do here is stuff we did above for the global correlation. 
 
 ```{r}
 #Generate list of neighbours using the Queen criteria
 w <- poly2nb(burglaries_per_lsoa, row.names=burglaries_per_lsoa$code)
 #Generate list with weights using row standardisation
-ww <-  nb2listw(w, style='W')
+ww <- nb2listw(w, style='W')
 ```
 
 ### Activity 10: Exploring a Local Indicator of Spatial Association: Local Moran's I. 
@@ -407,10 +407,9 @@ summary(locm_bm)
 
 The first column provides the summary statistic for the local moran statistic. Being local you will have one for each of the areas. The last column gives you a p value for this statistic. In order to produce the LISA map we need to do some previous work. First we are going to create some new variables that we are going to need:
 
-
 First we scale the variable of interest. When we scale burglary what we are doing is re-scaling the values so that the mean is zero. This is the process of computing a *z-score*, which you achieve through taking the value, subtracting the mean, and dividing by the standard deviation. See an explanation of what this does [here](http://www.gastonsanchez.com/visually-enforced/how-to/2014/01/15/Center-data-in-R/). 
 
-We can use `scale()`, which is a generic function whose default method centers and/or scales the variable. Here centering is done by subtracting the mean (omitting NAs) the corresponding columns, and scaling is done by dividing the (centered) variable by their standard deviations:
+We can use `scale()`, which is a generic function whose default method centers and/or scales the variable. Here centering is done by subtracting the mean (omitting NAs) of the corresponding columns, and scaling is done by dividing the (centered) variable by their standard deviations:
 
 ```{r}
 #scale the variable of interest and save it to a new column
@@ -528,7 +527,7 @@ Let's put 'em on a map, just simply, using quick thematic map (`qtm()`):
 
 
 ```{r}
-qtm(burglaries_per_lsoa, fill="quad_sig", fill.title="LISA")
+qtm(burglaries_per_lsoa, fill="quad_sig", fill.legend = tm_legend(title = "LISA"))
 ```
 
 Very nice!
