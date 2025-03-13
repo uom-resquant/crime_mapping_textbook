@@ -280,15 +280,14 @@ The most well known measure of spatial autocorrelation is the Moran's I. It was 
 $$I = \frac{n}{\sum_i \sum_j w_{ij}} \frac{\sum_i \sum_j w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_i(x_i - \bar{x})^2}$$
 
 
-To compute this in R,  we can use the `moran()` function. Have a look at `?moran` to see a description of this in R.
-You will see the above formula but in code form: `I = (n sum_i sum_j w_ij (x_i - xbar) (x_j - xbar)) / (S0 sum_i (x_i - xbar)^2)`. (Note: `S0` is refers to the sum of the weights, which is also same as $\sum_i \sum_j w_{ij}$)
+To compute this in R,  we can use the `moran()` function. Have a look at `?moran` to see a description of this in R. (Note: `S0` refers to the sum of the weights, which is the same as $\sum_i \sum_j w_{ij}$)
 
 ### Activity 7: Calculate Moran's I
 
-As the function is defined as `moran(y, ww, n, Szero(ww))`, we will need to add the arguments of `x` - our variable of interest, `ww` - our weights list,  `n` - the number of observations, and `S0` - the sum of the weights (note that when we have *row standardised* weights then `S0` is the same as `n`, so actually that part can be ignored from the equation, but we still must supply this information). In order to supply this `S0` we can use the `Szero()` function (in the spdep package) and pass to it our weights object (`ww`).  You might think it odd to supply these parameters as they can be derived from the “ww” object which has that information. Anyway, we supply them and it works. There probably are cases where it makes sense to use other values.
+As the function is defined as `moran(y, listw, n, S0)`, we will need to add the arguments of `x` - our variable of interest, `listw` - our weights list,  `n` - the number of observations, and `S0` - the sum of the weights (note that when we have *row standardised* weights then `S0` is the same as `n`, so actually that part can be ignored from the equation, but we still must supply this information). In order to supply this `S0` we can use the `Szero()` function (in the spdep package) and pass to it our weights object (`ww`).  You might think it odd to supply these parameters as they can be derived from our `ww` object which has that information. Anyway, we supply them and it works. There probably are cases where it makes sense to use other values.
 
 ```{r}
-moran(cc_burglary$burglary, ww, n=length(ww$neighbours), S0=Szero(ww))
+moran(cc_burglary$burglary, listw = ww, n=length(ww$neighbours), S0=Szero(ww))
 ```
 
 So the Moran's I here is 0.13, which is not very large. The Index is usually bounded by -1 and 1 (the exact bounds depend on the weights matrix used - when the matrix is row-standardised it will always be between -1 and 1), so 0.13 is not large, but it is still above zero, so we might want to explore whether this is significant using a test of statistical significance for this statistic. 
