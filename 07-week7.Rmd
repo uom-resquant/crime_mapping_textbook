@@ -12,7 +12,6 @@ We'll be making use of the following packages:
 - `dplyr`
 - `janitor`
 - `sf`
-- `sp`
 - `spdep`
 - `tmap`
 - `readxl`
@@ -23,7 +22,6 @@ library(readxl)
 library(janitor)
 library(tmap)
 library(dplyr)
-library(sp)
 library(spdep)
 ```
 
@@ -42,7 +40,7 @@ manchester_lsoa <- st_read("data/BoundaryData/england_lsoa_2011.shp")
 download.file("https://www.dropbox.com/s/h5c1okn4m6t3rqe/BoundaryData.zip?dl=1" , 
               destfile="data/BoundaryData.zip", # change to your local directory
               mode = "wb")
-#Important! note that I extract file to the data/BoundaryData folder. you HATE TO change exdir (the directory to extract files to)
+#Important! note that I extract file to the data/BoundaryData folder. you HAVE TO change exdir (the directory to extract files to)
 unzip("data/BoundaryData.zip", exdir = "data/BoundaryData")
 manchester_lsoa <- st_read("data/BoundaryData/BoundaryData/england_lsoa_2011.shp")
 ```
@@ -90,7 +88,7 @@ bur_mc <- burglary_spatial[unlist(bur_mc_intersects),]
 plot(st_geometry(bur_mc))
 ```
 
-We now have the burglaries data, let's now count how many burglaries there are within each LSOA polygon. This is a point in polygon operation that we covered in week 4 when we counted the number of violent crimes in the buffers of the licenced premises for example. If the code or the notion does not make much sense to you make sure you review the relevant session from week 4.
+We now have the burglaries data, let's now count how many burglaries there are within each LSOA polygon. This is a point in polygon operation that we covered in week 4 when we counted the number of violent crimes in the buffers of the licensed premises for example. If the code or the notion does not make much sense to you make sure you review the relevant session from week 4.
 
 ```{r message = FALSE, warning = FALSE} 
 #step6: point in polygon spatial operation (be patient this can take time)
@@ -181,13 +179,13 @@ So now we have a new spatial object `cc_burglary` with the 23 LSOA units that co
 
 ### Activity 2: Manually explore neighbours
 
-The id argument in the tm_fill ensures that when you click over any of the areas you get not only the count of burglaries in that LSOA (the quantity we are mapping) gets displayed within a bubble, but you also get to see the code that identifies that LSOA.
+The id argument in the tm_fill ensures that when you click on any of the areas you get not only the count of burglaries in that LSOA (the quantity we are mapping) gets displayed within a bubble, but you also get to see the code that identifies that LSOA.
 
 Move your cursor over the LSOA covering the West of Beswick (E01033688). You will see this area had 34 burglaries in 2019. Using the rook criteria identify the first order neighbors of this LSOA. List their identifiers. Are things different if we use the queen criteria? If so, how does it change? Think and think hard about what the lecture by Luc Anselin discussed. Have you identified *all* the neighbours of this area? (there are multiple ways of answering this question, just make sure you reason your answer).
 
 ## Creating a list of neighbours
 
-It would be very, very tedious having to identify the neighbours of all the areas in our study area by hand, in the way we have done aboce in Activity 2. That's why we love computers. We can automate tedious work so that they do it and we have more time to do fun stuff. We can use code to get the computer to establish what areas are next to each other (if we are using a contiguity based definition of being a neighbour).
+It would be very, very tedious having to identify the neighbours of all the areas in our study area by hand, in the way we have done above in Activity 2. That's why we love computers. We can automate tedious work so that they do it and we have more time to do fun stuff. We can use code to get the computer to establish what areas are next to each other (if we are using a contiguity based definition of being a neighbour).
 
 ### Activity 3: Creating a neighbour list
 
@@ -251,7 +249,7 @@ When our spatial weights matrix looks like this, it is *symmetrical*. That is th
 
 So with  binary coding scheme, we get a spatial influence of 1 if the LSOA is a neighbour, and 0 if it is not a neighbour. But we can also get more informative than that. 
 
-In many computations we will see that the matrix is **row standardised**. We can obtain a row standardise matrix changing the `style=`  parameter to `style='W'`: 
+In many computations we will see that the matrix is **row standardised**. We can obtain a row standardised matrix by changing the `style=`  parameter to `style='W'`: 
 
 ```{r}
 wm_rs <- nb2mat(w, style='W')
@@ -279,18 +277,17 @@ ww
 The most well known measure of spatial autocorrelation is the Moran's I. It was developed by Patrick Alfred Pierce Moran, an Australian statistician. You can find the formula and some explanation in [the wikipedia article](https://en.wikipedia.org/wiki/Moran's_I). The video lecture by Luc Anselin covers an explanation of Moran's I. We strongly recommend you watch the video. You can also find helpful [this link](https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/h-how-spatial-autocorrelation-moran-s-i-spatial-st.htm) if things are still unclear. The formula you see may look intimidating but it is nothing but the formula for standard correlation expanded to incorporate the spatial weight matrix.
 
 
-$ I = \frac{n}{\sum_i \sum_j w_{ij}} * \frac{\sum_i \sum_j * (x_i - \bar{x})(x_j - \bar{x})}{\sum_i(x_i - \bar{x})^2}$
+$$I = \frac{n}{\sum_i \sum_j w_{ij}} \frac{\sum_i \sum_j w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_i(x_i - \bar{x})^2}$$
 
 
-To compute this in R,  we can use the `moran()` function. Have a look at `?moran` to see a description of this in R.
-You will see the above formula but in code form: `I = (n sum_i sum_j w_ij (x_i - xbar) (x_j - xbar)) / (S0 sum_i (x_i - xbar)^2)`. (Note: `S0` is refers to the sum of the weights, which is also same as $\sum_i \sum_j w_{ij}$)
+To compute this in R,  we can use the `moran()` function. Have a look at `?moran` to see a description of this in R. (Note: `S0` refers to the sum of the weights, which is the same as $\sum_i \sum_j w_{ij}$)
 
 ### Activity 7: Calculate Moran's I
 
-As the function is defined as `moran(y, ww, n, Szero(ww))`, we will need to add the arguments of `x` - our variable of interest, `ww` - our weights list,  `n` - the number of observations, and `S0` - the sum of the weights (note that when we have *row standardised* weights then `S0` is the same as `n`, so actually that part can be ignored from the equation, but we still must supply this information). In order to supply this `S0` we can use the `Szero()` function (in the spdep package) and pass to it our weights object (`ww`).  You might think it odd to supply these parameters as they can be derived from the “ww” object which has that information. Anyway, we supply them and it works. There probably are cases where it makes sense to use other values.
+As the function is defined as `moran(y, listw, n, S0)`, we will need to add the arguments of `x` - our variable of interest, `listw` - our weights list,  `n` - the number of observations, and `S0` - the sum of the weights (note that when we have *row standardised* weights then `S0` is the same as `n`, so actually that part can be ignored from the equation, but we still must supply this information). In order to supply this `S0` we can use the `Szero()` function (in the spdep package) and pass to it our weights object (`ww`).  You might think it odd to supply these parameters as they can be derived from our `ww` object which has that information. Anyway, we supply them and it works. There probably are cases where it makes sense to use other values.
 
 ```{r}
-moran(cc_burglary$burglary, ww, n=length(ww$neighbours), S0=Szero(ww))
+moran(cc_burglary$burglary, listw = ww, n=length(ww$neighbours), S0=Szero(ww))
 ```
 
 So the Moran's I here is 0.13, which is not very large. The Index is usually bounded by -1 and 1 (the exact bounds depend on the weights matrix used - when the matrix is row-standardised it will always be between -1 and 1), so 0.13 is not large, but it is still above zero, so we might want to explore whether this is significant using a test of statistical significance for this statistic. 
@@ -352,7 +349,7 @@ In this section we will learn about local indicators of spatial association (LIS
 
 ### Activity 9: Get data and weights for all Manchester 
 
-To explore local indicators of spatial correlation, let's go back to using all of Manchester, rather than just City Centre ward. We want to have enough data to see local variation, and while the code may take slightly longer to run, we can have a go at more meaningful stats. 
+To explore local indicators of spatial correlation, let's go back to using all of Manchester, rather than just the City Centre ward. We want to have enough data to see local variation, and while the code may take slightly longer to run, we can have a go at more meaningful stats. 
 
 So this is our `burglaries_per_lsoa` object that we're referring back to. To check what our data look like, we can always plot again with `tmap`:
 
@@ -368,13 +365,13 @@ tm_shape(burglaries_per_lsoa) +
 
 ```
 
-Looks good! Now that we have the data we can generate the weight matrix. Again, what we do here is stuff we did above for the global correlation. In fact, if you did the optional homework already, you will also have run this code.
+Looks good! Now that we have the data we can generate the weight matrix. Again, what we do here is stuff we did above for the global correlation. 
 
 ```{r}
 #Generate list of neighbours using the Queen criteria
 w <- poly2nb(burglaries_per_lsoa, row.names=burglaries_per_lsoa$code)
 #Generate list with weights using row standardisation
-ww <-  nb2listw(w, style='W')
+ww <- nb2listw(w, style='W')
 ```
 
 ### Activity 10: Exploring a Local Indicator of Spatial Association: Local Moran's I. 
@@ -410,10 +407,9 @@ summary(locm_bm)
 
 The first column provides the summary statistic for the local moran statistic. Being local you will have one for each of the areas. The last column gives you a p value for this statistic. In order to produce the LISA map we need to do some previous work. First we are going to create some new variables that we are going to need:
 
-
 First we scale the variable of interest. When we scale burglary what we are doing is re-scaling the values so that the mean is zero. This is the process of computing a *z-score*, which you achieve through taking the value, subtracting the mean, and dividing by the standard deviation. See an explanation of what this does [here](http://www.gastonsanchez.com/visually-enforced/how-to/2014/01/15/Center-data-in-R/). 
 
-We can use `scale()`, which is a generic function whose default method centers and/or scales the variable. Here centering is done by subtracting the mean (omitting NAs) the corresponding columns, and scaling is done by dividing the (centered) variable by their standard deviations:
+We can use `scale()`, which is a generic function whose default method centers and/or scales the variable. Here centering is done by subtracting the mean (omitting NAs) of the corresponding columns, and scaling is done by dividing the (centered) variable by their standard deviations:
 
 ```{r}
 #scale the variable of interest and save it to a new column
@@ -531,7 +527,7 @@ Let's put 'em on a map, just simply, using quick thematic map (`qtm()`):
 
 
 ```{r}
-qtm(burglaries_per_lsoa, fill="quad_sig", fill.title="LISA")
+qtm(burglaries_per_lsoa, fill="quad_sig", fill.legend = tm_legend(title = "LISA"))
 ```
 
 Very nice!
