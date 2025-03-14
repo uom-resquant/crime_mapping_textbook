@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2025-03-05" />
+<meta name="date" content="2025-03-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -465,7 +465,7 @@ div.csl-indent {
 <p>You may not remember all of what you did to generate that file so let’s not waste time and just cut and paste from below (but try to remember what each of the lines of code is doing and if you are not clear look at the notes from last week). Imagine you had to do all of this again by pointing and clicking in a graphical user interface rather than just sending the code to the console! As you will see time and time again, code in the end is a much more efficient way of talking to a computer.</p>
 <div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="thematic-maps-in-r.html#cb109-1" tabindex="-1"></a>crimes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/eonk/cm_book/main/data/2019-06-greater-manchester-street.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 32058 Columns: 12
-## ── Column specification ──────────────────────────────────────────────
+## ── Column specification ───────────────
 ## Delimiter: &quot;,&quot;
 ## chr (9): Crime ID, Month, Reported by, Falls within, Location, LSOA code, LS...
 ## dbl (2): Longitude, Latitude
@@ -724,10 +724,12 @@ In specific to crime mapping, there is an ongoing issue of the <em>denominators 
 <span id="cb148-38"><a href="thematic-maps-in-r.html#cb148-38" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="st">&quot;Crime rate&quot;</span>)</span>
 <span id="cb148-39"><a href="thematic-maps-in-r.html#cb148-39" tabindex="-1"></a></span>
 <span id="cb148-40"><a href="thematic-maps-in-r.html#cb148-40" tabindex="-1"></a><span class="fu">tmap_arrange</span>(crime_count_map, res_pop_map, crime_rate_map)</span></code></pre></div>
-<pre><code>## [plot mode] fit legend/component: Some legend items or map compoments
-## do not fit well, and are therefore rescaled.
-## ℹ Set the tmap option `component.autoscale = FALSE` to disable
-##   rescaling.</code></pre>
+<pre><code>## [plot mode] fit legend/component: Some
+## legend items or map compoments do not
+## fit well, and are therefore rescaled.
+## ℹ Set the tmap option
+##   `component.autoscale = FALSE` to
+##   disable rescaling.</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-89-1.png" width="672" /></p>
 <p>What do you think about these three maps? How do you think this might be different if we were to look at workday population instead of residential population as a denominator? Discuss in your groups.</p>
 <!-- ### Homework 2  -->
