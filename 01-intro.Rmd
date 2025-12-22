@@ -300,7 +300,6 @@ class(list_data)
 
 3. *data frames*: also stores elements but differ from lists because they are defined by their number of columns and rows; the vectors (columns) must be of the same length. Data frames can contain different classes but each column must be of the same class. For example, if you want to combine some related vectors to make a data frame on violent American cities, use the function `data.frame()`:
 
-![](img/df.png)
 
 ```{r}
 # Making some relevant vectors
@@ -493,7 +492,7 @@ library(ggplot2)
 
 Then we will use one of its functions to create a scatterplot. 
 
-```{r scatterplotofhatecrimes}
+```{r scatterplotofhatecrimes, warning=FALSE, message=FALSE}
 ggplot(hate_crimes, aes(x=share_vote_trump, y=avg_hatecrimes_per_100k_fbi)) +
     geom_point(shape=1) +
      geom_smooth(method=lm)
