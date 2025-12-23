@@ -142,7 +142,7 @@ crimes <- read_csv(file.choose())
 Or, if you know the path to your file, you can code it in there, within quotation marks:
 
 ```{r, eval=TRUE}
-crimes <- read_csv("data/2019-06-greater-manchester-street.csv")
+crimes <- read_csv("data/crimes_w_lsoa_codes_attached.csv")
 ```
 
 You might notice that the object `crimes` has appeared in your work environment window. It will tell you how many observations (rows - and incidentally the number of recorded crimes in June 2019 within the GMP jurisdiction) and how many variables (columns) your data has.
@@ -234,7 +234,7 @@ Well it denotes a sparticular geographical sub-unit within Bolton called a **Low
 
 There are now 181,408 OAs, 34,753 lower layer super output areas (LSOA) and 7,201 middle layer super output areas (MSOA) in England and Wales. The neat thing about these Census geographies is the idea is that they don't change (unlike administrative boundaries such as wards) and were created with statistical analysis in mind. The less neat thing is that although we use them to operationalise the concept of neighbourhood a lot, they may not bear much resemblance to what residents might think of as their neighbourhood. Think for a minute - do you know what LSOA you live in? Most likely you answered no. If you answered yes, I am impressed and you get geography nerd cred. Well done. 
 
-Anyway back to our crime data. You see we have two columns that reference LSOAs, `lsoa_name` and `lsoa_code`. We can use these to *link* our crime data to a *shapefile* of a *polygon* which contains the geometries needed to put the crime data on the map. 
+Anyway back to our crime data. You see we have two columns that reference LSOAs, `lsoa21nm` and `lsoa21cd`. We can use these to *link* our crime data to a *shapefile* of a *polygon* which contains the geometries needed to put the crime data on the map. 
 
 ## Putting crime on the map - simple features
 
@@ -546,7 +546,7 @@ So to get some boundary data, you can use the UK Data Service website. There is 
 
 When you get to the link, you will see on the top there is some notification to help you with the boundary data selector. If in the future you are looking for boundary data and you are feeling unsure at any point, feel free to click on that note "**How to use Boundary Data Selector**" which will help to guide you. 
 
-For now, let's focus on the selector options. Here you can choose the country you want to select shapefiles for. We select "England". You can also choose the type of geography we want to use. Here we select "Statistical Building Block", as discussed above. And finally you can select when you want it for. If you are working with historical data, it makes sense to find boundaries that match the timescale for your data. Here we will be using data from pre-2021, so we will need the historic LSOAs (2011 to 2020). 
+For now, let's focus on the selector options. Here you can choose the country you want to select shapefiles for. We select "England". You can also choose the type of geography we want to use. Here we select "Statistical Building Block", as discussed above. And finally you can select when you want it for.  
 
 ***
 
@@ -562,23 +562,13 @@ Once you have selected these options, click on the "Find" button. That will popu
 
 Here you can select the boundaries we want. As discussed, we want the census lower super output areas. But again, your future choices here will depend on what data you want to be mapping. 
 
-Once you've made your choice, click on "List Areas". This will now populate the box below. We are here concerned with Manchester. However you can select more than one if you want boundaries for more than one area as well. Just hold down "ctrl" to select multiple areas individually, or the shift key to select everything in between. 
+Once you've made your choice, click on "List Areas". This will now populate the box below. You will see it lists "England", click on this and then the button "Expand Selection". Next we choose the North West, and then finally select Manchester: 
 
 ***
 
 ![](img/boundary_selector_3.png) 
 
 ***
-
-Once you've made your decision click on the "Extract Boundary Data" button. You will see the following message: 
-
-***
-
-![](img/wait.png)
-
-***
-
-You can bookmark, or just stay on the page and wait. How long you have to wait will depend on how much data you have requested to download. 
 
 When your data is read, you will see the following message: 
 
@@ -613,12 +603,12 @@ You should end up with a folder called "BoundaryData". Have a look at its conten
 
 So you can see immediately that there are some documentations around the usage of this shapefile, in the readme and the terms and conditions. Have a look at these as they will contain information about how you can use this map. For example, all your maps will have to mention where you got all the data from. So since you got this boundary data from the UKDS, you will have to note the following: 
 
-> "Contains National Statistics data © Crown copyright and database right [year]
-    Contains OS data © Crown copyright [and database right] (year)"
+> "Source: Office for National Statistics licensed under the Open Government Licence v.3.0
+    Contains OS data © Crown copyright and database right [year]"
 
 You can read more about this in the terms and conditions document. 
 
-But then you will also notice that there are 4 files with the same name "england_oac_2011". **It is important that you keep all these files in the same location as each other!** They all contain different bits of information about your shapefile (and they are all needed): 
+But then you will also notice that there are 4 files with the same name "england_lsoa_2021". **It is important that you keep all these files in the same location as each other!** They all contain different bits of information about your shapefile (and they are all needed): 
 
 - .shp — shape format; the feature geometry itself - this is what you see on the map
 - .shx — shape index format; a positional index of the feature geometry to allow seeking forwards and backwards quickly
@@ -636,7 +626,7 @@ Let's create an object and assign it our shapefile's name:
 ```{r}
 # Remember to use the appropriate pathfile in your case 
 # alt, manchester_lsoa <- st_read(file.choose())
-shp_name <- "data/BoundaryData/england_lsoa_2011.shp"
+shp_name <- "data/BoundaryData/england_lsoa_2021.shp"
 ```
 
 Make sure that this is saved in your working directory, and you have set your working directory. 
@@ -713,10 +703,10 @@ crime_per_LSOA <- summarise(grouped_crimes, count = n())
 As you can see we can do what we wanted, create a new dataframe with the required info, but if we do this we are creating many objects that we don't need, one at each step. Instead there is a more efficient way of doing this, without so many intermediate steps clogging up our environment with unnecessary objects. That's where the piping operator comes handy. The piping operator is written like `%>%` and it can be read as "and then". Look at the code below:
 
 ```{r}
-#First we say create a new object called crime_per_lsoa, and then select only the LSOA.code column to exist in this object, and then group this object by the LSOA.code, and then count the number of cases within each category, this is what I want in the new object.
+#First we say create a new object called crime_per_lsoa, and then select only the lsoa_code column to exist in this object, and then group this object by the LSOA.code, and then count the number of cases within each category, this is what I want in the new object.
 
 crimes_per_lsoa <- crimes %>%
-  group_by(lsoa_code) %>%
+  group_by(lsoa21cd) %>%
   summarise(count=n())
 ```
 
@@ -730,7 +720,7 @@ Those of you playing close attention might note that there are still more observ
 
 Our next task is to link our crimes data to our sf spatial object to help us map this. Notice anything similar between the data from the shapefile and the frequency table data we just created? Do they share a column? 
 
-Yes! You might notice that the `lsoa_code` field in the crimes data matches the values in the `code` field in the spatial data. In theory we could join these two data tables.
+Yes! You might notice that the `lsoa21cd` field in the crimes data matches the values in the `code` field in the spatial data. In theory we could join these two data tables.
 
 So how do we do this? Well what you can do is to link one data set with another.  Data linking is used to bring together information from different sources in order to create a new, richer dataset. This involves identifying and combining information from corresponding records on each of the different source datasets. The records in the resulting linked dataset contain some data from each of the source datasets. Most linking techniques combine records from different datasets if they refer to the same entity (an entity may be a person, organisation, household or even a geographic region.) 
 
@@ -779,7 +769,7 @@ So let's join the crimes data to the spatial data, using left_join():
 We have to tell left_join what are the dataframes we want to join, as well as the names of the columns that contain the matching values in each one. This is "code" in the manchester_lsoa dataframe and "lsoa_code" in the crimes_per_lsoa dataframe. Like so: 
 
 ```{r}
-manchester_lsoa <- left_join(manchester_lsoa, crimes_per_lsoa, by = c("code"="lsoa_code"))
+manchester_lsoa <- left_join(manchester_lsoa, crimes_per_lsoa, by = c("lsoa21cd"="lsoa21cd"))
 ```
 
 Now if you have a look at the data again, you will see that the column of number of crimes (`count`) has been added on. You may not want to have to go through this process all the time that you want to work with this data. One thing you could do is to save the "manchester_lsoa" object as a physical file in your machine. You can use the `st_write()` function from the `sf` package to do this. If we want to write into a shapefile format, we would do as shown below. Make sure you save this file, for we will come back to it in subsequent weeks.
