@@ -32,3 +32,15 @@ crimes_w_lsoa <- crimes_w_lsoa %>% filter(!is.na(lsoa21cd)) %>% bind_rows(crimes
 # sum(is.na(crimes_w_lsoa$lsoa21cd))
 
 write.csv(st_drop_geometry(crimes_w_lsoa), "data/crimes_w_lsoa_codes_attached.csv", row.names = FALSE)
+
+
+# DO the same for the stop and search data
+stopsearch_w_lsoa <- read.csv("data/2019-06-greater-manchester-stop-and-search.csv")
+stopsearch_sf <- st_as_sf(stopsearch_w_lsoa, coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE, na.fail = FALSE)
+stopsearch_sf <- st_transform(stopsearch_sf, st_crs(all_lsoa))
+stopsearch_w_lsoa <- st_join(stopsearch_sf, all_lsoa[, c("lsoa21cd", "lsoa21nm")], join = st_within)
+stopsearch_w_lsoa_na <- stopsearch_w_lsoa %>% filter(is.na(lsoa21cd)) %>% select(!c(lsoa21cd, lsoa21nm))
+stopsearch_w_lsoa_na <- st_join(stopsearch_w_lsoa_na, all_lsoa[, c("lsoa21cd", "lsoa21nm")], join = st_nearest_feature)
+stopsearch_w_lsoa <- stopsearch_w_lsoa %>% filter(!is.na(lsoa21cd)) %>% bind_rows(stopsearch_w_lsoa_na)
+write.csv(st_drop_geometry(stopsearch_w_lsoa), "data/ss_with_lsoa.csv", row.names = FALSE)
+
