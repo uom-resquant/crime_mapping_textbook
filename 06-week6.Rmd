@@ -28,7 +28,9 @@ library(janitor)
 library(sf)
 library(ggplot2)
 library(dplyr)
-library(spatstat)
+library(spatstat.geom)
+library(spatstat.explore)
+library(spatstat.random)
 library(terra)
 library(leaflet)
 ```
@@ -48,11 +50,11 @@ You can get both the geojson file of wards and the excel file of crimes from Bla
 
 ```{r}
 #Read a geojson file with Manchester wards (remember we learned about geojson files in week 4).
-manchester_ward <- st_read("data/manchester_ward.geojson")
+manchester_ward <- st_read("data/manchester_wards.geojson")
 
 #step1: create a new object that only has the 'fallowfield' ward
 df1 <- manchester_ward %>%
-  filter(wd16nm == "Fallowfield")
+  filter(wd22nm == "Fallowfield")
 
 #step2: change coordinate systems
 fallowfield <- st_transform(df1, 4326)
@@ -70,7 +72,7 @@ burglary <- filter(crimes, crime_type == "Burglary")
 
 #step6: transform the dataframe with crime information into a sf object
 burglary_spatial <-  st_as_sf(burglary, coords = c("longitude", "latitude"), 
-                 crs = 4326, agr = "constant")
+                 crs = 4326)
 
 #step7: select only the crimes that take place within the space defined by the Ward boundaries
 # intersection
@@ -88,25 +90,25 @@ Now we have all our data cleaned and all our files prepared. Let's see the resul
 ggplot() + 
   geom_sf(data = fallowfield) + 
   geom_sf(data = bur_fal) + 
-  theme(legend.position = "none",
-        panel.grid = element_blank(),
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        panel.background = element_blank()) 
+  theme_void() 
 ```
 
 In the point pattern analysis literature each point is often referred to as an **event** and these events can have **marks**, attributes or characteristics that are also encoded in the data. In our spatial object one of these *marks* is the type of crime (although in this case it's of little interest since we have filtered on it).
 
 ### Activity 1: Getting the data into spatstat: the problem with duplicates
 
-So let's start using spatstat.The first thing we need to do is to transform our `sf` object into a `ppp` object which is how `spatstat` likes to store its point patterns. Unfortunately, spatstat and many other packages for analysis of spatial data precede `sf`, so the transformation is a bit awkward. Also before we do that, it is important to realise that a point pattern is defined as a series of events in a given area, or window, of observation. It is therefore extremely important to precisely define this *window*. In `spatstat` the function `owin()` is used to set the observation window. However, the standard function takes the coordinates of a rectangle or of a polygon from a matrix, and therefore it may be a bit tricky to use. Luckily the package `maptools` provides a way to transform a `SpatialPolygons` into an object of class `owin`, using the function `as.owin()`. Here are the steps: 
+So let's start using spatstat. The first thing we need to do is to transform our `sf` object into a `ppp` object which is how `spatstat` likes to store its point patterns. A `ppp` object needs two ingreatiesnts: 1: the points (xy coordinates) and 2: the observation window (the polygon that defines where points could have been observed). 
 
-First we transform the CRS of our 'Falllowfield' polygon into projected coordinates (British National Grid) as opposed to geographic coordinates (WGS84) :
+Because point pattern methods rely on distances, we do this in a projected CRS in metres (British National Grid, EPSG:27700).
 
 ```{r}
+
 fallowfield_proj <- st_transform(fallowfield, 27700)
+bur_fal_proj     <- st_transform(bur_fal, 27700)
+
 ```
+
+Now, since a point pattern is defined as a series of events in a given area, or window, of observation, it is extremely important to precisely define this *window*. In `spatstat` the function `owin()` is used to set the observation window. We can do this using the function `as.owin()`. Here are the steps: 
 
 Then we use the as.owin function to define the window. 
 
@@ -124,17 +126,18 @@ window
 Now that we have created the window as an `owin` object let's get the points. First we will extract the coordinates from our `sf` point data into a matrix:
 
 ```{r}
-#we must transform these too to match our window in BNG
-bur_fal <- st_transform(bur_fal, 27700) 
-sf_bur_fal_coords <- matrix(unlist(bur_fal$geometry), ncol = 2, byrow = T)
+
+xy <- st_coordinates(bur_fal_proj)
+
 ```
 
 Then we use the `ppp` function to create the ppp (point pattern) object using the information from our matrix and the window that we created.
 
 ```{r}
-bur_ppp <- ppp(x = sf_bur_fal_coords[,1], y = sf_bur_fal_coords[,2],
+bur_ppp <- ppp(x = xy[,"X"], y = xy[,"Y"],
                    window = window, check = T)
 plot(bur_ppp)
+
 ```
 
 Notice the warning message about duplicates. In spatial point pattern analysis an issue of significance is the presence of duplicates. The statistical methodology used for spatial point pattern processes is based largely on the assumption that processes are *simple*, that is, that the points cannot be coincident. That assumption may be unreasonable in many contexts (for example, the literature on repeat victimisation indeed suggests that we should expect the same households to be at a higher risk of being hit again). Even so the point (no pun intended) is that *"when the data has coincidence points, some statistical procedures will be severely affected. So it is always strongly advisable to check for duplicate points and to decide on a strategy for dealing with them if they are present"* (Baddeley et al., 2016: 60).
@@ -163,12 +166,7 @@ That's quite something. `r sum(multiplicity(bur_ppp) > 1)` points here share coo
 ggplot() + 
   geom_sf(data = fallowfield) + 
   geom_sf(data = bur_fal, alpha = 0.4) + 
-  theme(legend.position = "none",
-        panel.grid = element_blank(),
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        panel.background = element_blank()) 
+  theme_void() 
 ```
 
 In the case of crime, as we have hinted some of this may be linked to the nature of crime itself, *repeat victimisation*. However, this pattern of duplication is fairly obvious across all crime categories in the police.uk website.
@@ -346,12 +344,6 @@ leaflet() %>%
 ```
 
 And there you have it. Perhaps those familiar with Fallowfield have some guesses as to what may be going on there?
-
-<!-- ### Homework 1 -->
-<!-- *Ok, so see if you can do something like what we have done today, but for violent crime in the city centre. Produce the density estimates and then plot the density plot. In addition add a layer of points with the licenced premises we looked at last week.* -->
-
-<!-- ### Homework 2 -->
-<!-- *Produce a kernel density estimate for burglary across the whole of the city. Where is burglary more concentrated?* -->
 
 ## Spatial point patterns along networks
 
