@@ -13,18 +13,12 @@ Before we do any of this, we need to load the libraries we will use today:
 - `hexbin`
 - `janitor`
 - `sf`
-- `sp`
-- `spdep`
-- `tmap`
 - `readxl`
 - `readr`
 - `geodaData`
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 library(sf)
-library(tmap)
-library(sp)
-library(spdep)
 library(DCluster)
 library(cartogram)
 library(ggplot2)
@@ -73,7 +67,7 @@ for (x in libs) {
 
 As you can see if you read through the comments there, this bit of code checks each package in the list you pass to tbe `libs` object when you create it, and if it is not installed it installs for you, and if it is, it just loads it for you. It can be a handy bit of code to keep around. 
 
-We also want to introduce `pacmac`, developed by Dason Kurkiewicz, to make your life a lot easier in the realm of R packages. While the `library()` function does its job, but could be the tedious task, installing and loading each package one by one. The `p_load()` function, a single line code will automatically checks for missing missing packages and installs/loads all libraries into you R. So, try! 
+We also want to introduce `pacman`, developed by Dason Kurkiewicz, to make your life a lot easier in the realm of R packages. While the `library()` function does its job, but could be the tedious task, installing and loading each package one by one. The `p_load()` function, a single line code will automatically checks for missing missing packages and installs/loads all libraries into you R. So, try! 
 
 ```{r eval = FALSE}
 library(pacman)
@@ -303,7 +297,7 @@ This is currently just a text dataframe, so we need to let R know that actually 
 
 ```{r}
 sf_mcr_asb <- st_as_sf(mcr_asb, coords = c("Longitude", "Latitude"), 
-                 crs = 4326, agr = "constant")
+                 crs = 4326)
 ```
 
 Now one thing that this does is it consumes our lng and lat columns into a geometry attribute. This is generally OK, but for the binning we will do, we would like to have them as separate coordinates. We can do this by adding the argument `remove = FALSE` to our `st_as_sf` function. We will also rename these coordinate columns to be `lng` and `lat`.
@@ -311,19 +305,20 @@ Now one thing that this does is it consumes our lng and lat columns into a geome
 ```{r, warning=FALSE}
 #extract the coords to some columns, "lng" and "lat"
 sf_mcr_asb<- st_as_sf(mcr_asb, coords = c("Longitude", "Latitude"), 
-                       crs = 4326, agr = "constant", remove = FALSE) %>% 
+                       crs = 4326, remove = FALSE) %>% 
   rename(lng = Longitude,
          lat = Latitude)
 ```
 
-As a first step, we can plot asb in the borough of Manchester using simple ggplot! Remember the data visualisation session from weeks ago? We discussed how ggplot is such a great tool for building visualisations, because you can apply whatever geometry best suits your data. So for us to just have a look at the hexbinned version of our point data of antisocial behaviour, we can use the `stat_binhex()` function. We can also recreate the thematic map element, as we can use the frequency of points in each hex to shade each hexbin from white (least number of incidents) to red (most nuber of incidents). 
+As a first step, we can plot asb in the borough of Manchester using simple ggplot! Remember the data visualisation session from weeks ago? We discussed how ggplot is such a great tool for building visualisations, because you can apply whatever geometry best suits your data. So for us to just have a look at the hexbinned version of our point data of antisocial behaviour, we can use the `stat_binhex()` function. We can also recreate the thematic map element, as we can use the frequency of points in each hex to shade each hexbin from white (least number of incidents) to red (most number of incidents). 
 
 So let's have a go: 
 
 ```{r}
 ggplot(sf_mcr_asb, aes(lng, lat)) +                        #define data and variables for x and y axes
-  stat_binhex() +                                                         #add binhex layer (hexbin)
-  scale_fill_gradientn(colours = c("white","red"), name = "Frequency")    #add shading based on number of ASB incidents
+  stat_binhex(col = "black", lwd = 0.1) +                                                         #add binhex layer (hexbin)
+  scale_fill_gradientn(colours = c("white","red"), name = "Frequency") +     #add shading based on number of ASB incidents
+  theme_void()
 ```
 
 Neat, but doesn't quite tell us *where* that really dark hexbon actually is. So it would be much better if we could do this with a basemap as the background, rather than our grey ggplot theme.
@@ -333,8 +328,9 @@ Now, we can apply the same code as we used above, for the ggplot, to this ggmap,
 ```{r}
 ggplot(sf_mcr_asb, aes(x = lng, y = lat)) +
   annotation_map_tile() + 
-  stat_binhex(alpha=0.7) +                                                #add binhex layer (hexbin)
-  scale_fill_gradientn(colours = c("white","red"), name = "Frequency")    #add shading based on number of ASB incidents
+  stat_binhex(alpha=0.7, col = "black", lwd = 0.1) +                                                #add binhex layer (hexbin)
+  scale_fill_gradientn(colours = c("white","red"), name = "Frequency") +     #add shading based on number of ASB incidents
+  theme_void()
 ```
 
 Now this should give you some more context! Woo!
@@ -353,16 +349,17 @@ So I mentioned we'd go over some reasons why you should consider aggregating int
 
 ### Activity 8: Rectangular binning
 
-Now, to again illustrate the differences of different approaches, let's see what this map would look like with: 
+To illustrate the differences of different approaches, let's see what this map would look like with: 
 
 a) rectangular binning: 
 
 ```{r}
 ggplot(sf_mcr_asb, aes(x = lng, y = lat)) + 
   annotation_map_tile() + 
-  stat_bin2d(alpha=0.7) + 
+  stat_bin2d(alpha=0.7, col = "black", lwd = 0.1) + 
   scale_fill_gradientn(colours = c("white","red"), 
-                       name = "Frequency") 
+                       name = "Frequency") +
+  theme_void()
 ```
 
 b) hexagonal binning: 
@@ -370,9 +367,10 @@ b) hexagonal binning:
 ```{r}
 ggplot(sf_mcr_asb, aes(x = lng, y = lat)) + 
   annotation_map_tile() + 
-  stat_binhex(alpha=0.7) + 
+  stat_binhex(alpha=0.7, col = "black", lwd = 0.1) + 
   scale_fill_gradientn(colours = c("white","red"), 
-                       name = "Frequency")
+                       name = "Frequency") + 
+  theme_void()
 ```
 
 c) a simple "heatmap" (we will discuss these more thoroughly next week):
@@ -386,7 +384,8 @@ ggplot(sf_mcr_asb, aes(x = lng, y = lat)) +
   ## Configure the colors, transparency and panel
   scale_fill_gradientn(colours = c("white","red"), 
                        name = "Frequency")  +
-  scale_alpha(guide = "none")
+  scale_alpha(guide = "none") + 
+  theme_void()
 ```
 
 Look at the difference between the three maps (hex, rectangle, and density). How would your conclusions change if you were given these maps? Would you make different decisions about where to place your booths for the days of action? Why or why not? Discuss.
@@ -505,6 +504,8 @@ In this case that means select "English Districts, UAs and London Boroughs, 2011
 
 ![](img/la_shp_dl.png)
 
+You can, in a bind, get these data from Canvas too.
+
 Once you have the file, download, extract (unzip) and put the folder in your working directory. Mine is in a subfolder in my working directory called data, so I point R inside that folder to find my shape file. 
 
 ```{r}
@@ -522,7 +523,9 @@ Now we can have a look at these data:
 
 ```{r}
 ggplot() +
-  geom_sf(data = eu_sf, aes(fill = Pct_Leave)) 
+  geom_sf(data = eu_sf, aes(fill = Pct_Leave)) +
+  scale_fill_viridis_c(name = "Percent who voted to leave the EU") +
+  theme_void()
 ```
 
 We can see that in smaller LAs we don't even really see the result, as the boundary lines pretty much cover everything. Hmm. Now what we can do is transform the shapes. 
@@ -566,7 +569,9 @@ And if your cartogram has been created, you can now plot again the referendum re
 ```{r}
 # plot the percentage voting leave onto our cartogram
 ggplot() +
-  geom_sf(data = eu_cartogram, aes(fill = Pct_Leave)) 
+  geom_sf(data = eu_cartogram, aes(fill = Pct_Leave)) +
+  scale_fill_viridis_c(name = "Percent who voted to leave the EU") +
+  theme_void()
 ```
 
 We can now see London much better, and see that darker coloured cluster where much smaller percentage of people voted leave. 
