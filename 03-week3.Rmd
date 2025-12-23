@@ -345,19 +345,22 @@ census_lsoa_m <- left_join(census_respop %>% select(geography, geography_code, r
 
 ```
 
+You might want to save this file so you have it readily available for next time. You will be using it again in this week's homework task for example. Make sure to save in your data folder!
+
+```{r, eval = FALSE}
+
+write.csv(census_lsoa_m, file = "data/census_lsoa_manchester.csv", row.names = FALSE)
+
+```
+
+
 Now that we have the file ready we can link it to our *manchester_lsoa* file using code we learned last week. We use again the `left_join()` function to add to the *manchester_lsoa* dataframe the variables that are present in the *census_lsoa_m*. The first argument in the function is the name of the dataframe to which we want to add fields, the second argument the name of the dataframe from which those fields come, and then you need to specify using "by" the name of the variables on each of these two dataframes that have the id variable that will allow us to ensure that we are linking the information across the same observations.
 
 ```{r}
 manchester_crime_lsoa <- left_join(manchester_crime_lsoa, census_lsoa_m, by = c("lsoa21cd"="geography_code"))
 ```
 
-And there you go... Now you have a datafile with quite a few pieces of additional information about LSOAs in Manchester. You might want to save this file at this point. 
-
-```{r, eval=FALSE}
-write.csv(census_lsoa_m, file = "data/manchester_census_lsoa.csv", row.names = FALSE)
-
-```
-
+And there you go... Now you have a datafile with quite a few pieces of additional information about LSOAs in Manchester.
 
 The next step is to use this information.
 
@@ -367,12 +370,12 @@ Ok, so now we have a field that provides us with the number of crimes and two al
 
 But first we need to create new variables. For this we can use the `mutate()` function from the `dplyr` package. This is a very helpful function to create new variables in a dataframe based on transformations or mathematical operations performed in other variables within the dataframe. In this function, the first argument is the name of the data frame, and then we can pass as arguments all new variables we want to create as well as the instructions as to how we are creating those variables. 
 
-First we want to create a rate using the usual residents, since crime rates are often expressed by 100,000 inhabitants we will multiply the division of the number of crimes by the number of usual residents by 100,000. We will then create another variable, *crimr2*, using the workday population as the denominator. We will store this new variables in our existing *manchester_lsoa* dataset. You can see that below then I specify the name of a new variable *crimr1* and then I tell the function I want that variable to equal (for each case) the division of the values in the variable *count* (number of crimes) by the variable *respop* (number of people residing in the area) and then we multiply the result of this division by 100,000 to obtain a rate expressed in those terms. Then we do likewise for the alternative measure of crime.
+First we want to create a rate using the usual residents, since crime rates are often expressed by 1,000 inhabitants we will multiply the division of the number of crimes by the number of usual residents by 1,000. We will then create another variable, *crimr2*, using the workday population as the denominator. We will store this new variables in our existing *manchester_lsoa* dataset. You can see that below then I specify the name of a new variable *crimr1* and then I tell the function I want that variable to equal (for each case) the division of the values in the variable *count* (number of crimes) by the variable *respop* (number of people residing in the area) and then we multiply the result of this division by 1,000 to obtain a rate expressed in those terms. Then we do likewise for the alternative measure of crime.
 
 ```{r}
 manchester_crime_lsoa <- manchester_crime_lsoa %>% 
-  mutate(crimr1 = (count/respop)*100000, 
-         crimr2 = (count/wkdpop)*100000)
+  mutate(crimr1 = (count/respop)*1000, 
+         crimr2 = (count/wkdpop)*1000)
 
 ```
 
@@ -395,8 +398,6 @@ Pick the ones you like, and use them. Here I will use Blues, Greens and Reds
 
 ```{r}
 
-####
-
 crime_count_map <- tm_shape(manchester_crime_lsoa) +
   tm_fill(
     "count",
@@ -415,7 +416,7 @@ res_pop_map <- tm_shape(manchester_crime_lsoa) +
     "respop",
     fill.scale = tm_scale_intervals(values = "brewer.greens"),
     fill.legend = tm_legend(
-      title = "Crimes per 100000 residents",
+      title = "Residential population",
       position = c("right", "bottom"),
       title.size = 0.8,
       text.size = 0.5
@@ -428,7 +429,7 @@ crime_rate_map <- tm_shape(manchester_crime_lsoa) +
   tm_fill("crimr1", 
           fill.scale = tm_scale_intervals(values = "brewer.reds"), 
           fill.legend = tm_legend(
-            title = "Crimes per 100000 daytime population",
+            title = "Crimes per 1000 population",
             position = c("right", "bottom"),
             title.size = 0.8,
             text.size = 0.5)) + 
