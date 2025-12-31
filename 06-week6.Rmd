@@ -410,7 +410,7 @@ While sometimes there may be issues with linking points to routes due to problem
 
 Now we have some ways of identifying hot spots under our belts!
 
-## Recap
+## Summary
 
 Today we learned about spatial point patterns. Specifically we explored how to do the following: 
 - we looked at dividing our polygon into **quadrants**, and counting the number of crimes in each one

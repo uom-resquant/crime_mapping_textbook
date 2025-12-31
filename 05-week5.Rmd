@@ -578,7 +578,11 @@ We can now see London much better, and see that darker coloured cluster where mu
 
 Okay that's probably enough for the day. Nice work crime mappers!
 
-## References and further reading
+## Summary
+
+This week we learned how to improve thematic mapping choices when standard choropleths and point maps can mislead or overwhelm. We looked closely at why mapping raw rates can produce noisy "hot" and "cold" areas when denominators vary, and practised stabilising rates using empirical Bayes smoothing (both global and local) to reduce small-sample distortion while recognising the trade-offs of mapping adjusted estimates. We then explored spatial binning as an alternative to plotting thousands of points, comparing rectangular bins, hexbins, and density surfaces, and thinking through how each design choice can shift the story you tell (and the operational decisions you might make). Finally, we introduced MAUP and related edge and zoning issues to emphasise that patterns can change with the unit of aggregation, and we experimented with polygon transformations like cartograms to communicate data more legibly without pretending the map is a neutral lens. Taken together, you now have a stronger toolkit for producing clearer, fairer maps that support practical decisions, such as targeting antisocial behaviour interventions, while being explicit about the limits and assumptions built into your spatial units and visual encodings.
+
+As this is a large area and we just gave little tasters, if you would like to learn about this more, I have included more resources to check out below: (all completely optional)
 
 ### Binning
 - [Johnson, Zachary Forest. (18 October 2011). “Hexbins!” Retrieved from: http://indiemaps.com/blog/2011/10/hexbins/ (8 August 2014).](http://indiemaps.com/blog/2011/10/hexbins/)
