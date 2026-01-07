@@ -439,7 +439,7 @@ rwm <- mat2listw(wm, style='W')
 # Checking if rows add up to 1 (they should)
 mat <- listw2mat(rwm)
 #This code is simply adding each row to see if we get one when we add their values up, we are only displaying the first 15 rows in the matrix
-apply(mat, 1, sum)[1:15]
+apply(mat, 1, sum)
 ```
 
 Now we can plot:
