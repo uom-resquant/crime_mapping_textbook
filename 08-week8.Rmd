@@ -393,7 +393,7 @@ summary(fit_1)$r.squared
 
 Neat!
 
-### Activity 5: Residuals for our homicide rate model
+### Activity 4: Residuals for our homicide rate model
 
 Now then we can take this value as a measure of the strength of our model. If you look at the R output you will see that the $R^2$ for our model was `r summary(fit_1)$r.squared`. As mentioned already, we can use this to say that our model explains`r round(summary(fit_1)$r.squared*100,2)`%  of the variance in homicide. 
 
@@ -426,7 +426,7 @@ confint(fit_1)
 
 So far we have explained regression using a numeric input. It turns out we can also use regression with categorical explanatory variables. It is quite straightforward to run it. 
 
-### Activity 6: Homicide rates in the South v the North
+### Activity 5: Homicide rates in the South v the North
 
 There is only one categorical explanatory variable in this dataset, a binary indicator that indicates whether the county is in a Southern State or not. We can also explore this relationship using regression and a regression line. This is how you would express the model:
 
@@ -501,7 +501,7 @@ Multiple regression is one way of checking the relevance of competing explanatio
 
 It could not be any easier to fit a multiple regression model. You simply modify the formula in the `lm()` function by adding terms for the additional inputs.
 
-### Activity 7: Better explaining homicide rates
+### Activity 6: Better explaining homicide rates
 
 Let's try this with our data, using two predictors, the deprivation score and whether the county is in the north or the south to explain homicide rates. 
 
@@ -538,7 +538,7 @@ Comparing the simple models with this more complex model we could say that adjus
 Communicating your results in a clear manner is incredibly important. We have seen the tabular results produced by R. If you want to use them in a paper you may need to do some tidying up of those results. There are a number of packages (`textreg`, `stargazer`) that automate that process. They take your `lm` objects and produce tables that you can put straight into your reports or papers. One popular trend in presenting results is the **coefficient plot** as an alternative to the table of regression coefficients. There are various ways of producing coefficient plots with R for a variety of models. See [here](https://www.r-statistics.com/2010/07/visualization-of-regression-coefficients-in-r/) or [here](http://felixhaass.de/dataviz_ggplot2/session4.html), for example.
 
 
-### Activity 8: Plotting your results
+### Activity 7: Plotting your results
 
 We are going to use instead the `plot_model()` function of the `sjPlot` package, that makes it easier to produce these sorts of plots. You can find a more detailed tutorial about this function [here](https://strengejacke.wordpress.com/2017/10/23/one-function-to-rule-them-all-visualization-of-regression-models-in-rstats-w-sjplot/). See below for an example:
 
@@ -614,7 +614,7 @@ One way of extending our model to accommodate for interaction effects is to add 
 
 A nice way of understanding interactions effects is to think of  'interaction' meaning 'depends on'. So if you include an interaction between variables `x1` and `x2` in your model, you're saying that the value of `x1` *depends on* the value of `x2`.
 
-### Activity 9: Interaction effects
+### Activity 8: Interaction effects
 
 How do we do this in R? One way is to use the following notation in the formula argument. Notice how we have added a third term `RD90:SOUTH_f`, which is asking R to test the conditional hypothesis that resource deprivation may have a different impact on homicide for southern and northern counties.
 
