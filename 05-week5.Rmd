@@ -190,7 +190,7 @@ ncovr$HR60EBSL <- eb2$est * 100000
 
 We can now plot the maps and compare them:
 
-```{r, message=FALSE, warning=FALSE, fig.cap='Compare raw and smoothed rates across counties in the USA', fig.alt="Two shaded maps of counties in the United States. Both maps use five shades of red, getting darker to represent higher values, the first one corresponding to 'Raw rate', the second to 'Local Smooth', according to their legends. The first map is more blotchy than the second, with some lighter counties amidst darker red ones, and vice versa. The second map has much clearer contiguous blocks sharing the same colour. In both maps, the southeast has the most concentration of dark red, with some patches in the south and southwest."}
+```{r, message=FALSE, warning=FALSE}
 tmap_mode("plot")
 
 map1 <-  tm_shape(ncovr) +
@@ -224,7 +224,7 @@ tmap_arrange(map1, map2)
 
 Notice that the quantiles are not the same, so that will make your comparison difficult. Let's look at a boxplot of these variables. In the map of raw rates, we have the most variation. 
 
-```{r, fig.cap='Boxplots to compare variation in rates', fig.width=4, fig.alt="A box plot titled 'Different rates of homicide per hundred thousand people'. The vertical axis is labeled 'Rates', ranging from zero to nearly one hundred. Two datasets are depicted, 'Raw rate', and 'Local base smoother'. The first, 'Raw rate', has many more outliers above the maximum, which is marked around nineteen. The outliers are numerous until fourty, sparse until sixty, and one reaches nearly one hundred. On the other hand, 'Local base smoother' has much fewer outliers, and they are all close to the maximum, perhaps five units above at most."}
+```{r}
 #Boxplots with base R graphics
 boxplot(ncovr$HR60, ncovr$HR60EBSL,
         main = "Homicide per 100,000 people",

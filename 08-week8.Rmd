@@ -285,7 +285,7 @@ This is the expected value of Y, homicide rate, when X, resource deprivation is 
 In the output above we saw there was something called the residuals. The residuals are the differences between the observed values of Y for each case minus the predicted or expected value of Y, in other words the distances between each point in the dataset and the regression line (see the visual example below). 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Predicted values, measured value, and residual", fig.alt="A plot of black points and a blue regression line. One point is focused on, and a rounded box with label 'Measured value' identifies it. It lies a little ways above the blue line. A red vertical dashed line segment connects it to the line, and this segment is labeled as the 'Residual'. This red dashed line hits the blue line at a point which is labeled as the 'Predicted value'."}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 ggplot(data = mtcars[1:5, ], aes(x = mpg, y = wt)) +
   geom_segment(aes(
@@ -351,7 +351,7 @@ The residuals capture how much variation is unexplained, how much we still have 
 
 We can use information from the residuals to produce a measure of effect size, of how good our model is in predicting variation in our dependent variables. Remember our game where we try to guess homicide (Y)? If we did not have any information about X, our best bet for Y would be the mean of Y. The regression line aims to improve that prediction. By knowing the values of X, we can build a regression line that aims to get us closer to the actual values of Y (look at the figure below). 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Illustration of explained, unexplained, and total deviation", fig.alt="The previous plot of black points and blue line has gained more dashed lines, and explanations. Three horizontal dashed lines appear, the topmost one, labeled 'Actual Y', is intersecting our chosen data point. The next is labeled as 'Predicted Y', and is intersecting our blue line at our previous predicted value point. The third one is labeled 'Mean of T', and is further down. The distance between the first two lines, actual and predicted Y, is labeled 'Unexplained deviation (residual)'. The distance between predicted and the mean has label 'Explained deviation (regression). The sum of these, and distance between actual Y and mean of Y, is labeled 'Total deviation'."}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 ggplot(data = mtcars[1:5,], aes(x = mpg, y = wt)) + 
   geom_segment(aes(x = 21.4, xend = 21.4, y = 3.215, yend = 2.8), col = "red", lty = "dashed") + 

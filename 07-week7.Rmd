@@ -124,7 +124,7 @@ There are various ways of defining a neighbour. Most rely on topological or geom
 
 When defining neighbours by contiguity, we may also specify the *order* of contiguity. **First order contiguity** means that we are focusing on areas immediately contiguous (those in dark blue in the figure below). **Second order** means that we consider neighbours only those areas that are immediately contiguous to our first order neighbours (the light blue areas in the figure below) and you could go on and on. Look at the graphic below for clarification:
 
-```{r adjacencyfigure, echo=FALSE, fig.height=2, fig.cap="Defining neighbours by contiguity", fig.alt="Two seven by seven grids of rectangles, the first titled 'Queen criteria', the second 'Rook Criteria'. A legend at the bottom, labeled 'Contiguity', matches the colours green to 'Area itself', dark blue to 'First order', and light blue to 'Second order'. The centre of each grid is shaded green. In the first grid, 'Queen criteria', the eight neighbouring rectangles, including corners, are shaded dark blue. Radiating outwards, all sixteen rectangles neighbouring these dark blue ones are shaded light blue. In the second grid, 'Rook criteria', only the four direct neighbours of the central green rectangle are shaded in dark blue. Continuing, the eight direct neighbours of these dark blue cells are shaded light blue."}
+```{r adjacencyfigure, echo=FALSE}
 
 p1 <- ggplot() + 
   geom_rect(aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1), fill = 'white', colour = 'black') + 
@@ -662,7 +662,7 @@ We are now going to create a new variable to identify the quadrant in which each
 Essentially all we'll be doing is assigning a variable values based on where in the plot it is. So for example, if it's in the upper right, it is high-high and has values larger than 0 for both the burglary and the spatial lag values.  It it's in the upper left, it's low-high and has a value larger than 0 for the spatial lag value, but lower than 0 on the burglary value. And so on, and so on. Here's an image to illustrate:
 
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.height=4, fig.cap='Quadrants of a Moran scatterplot', fig.alt="A scatterplot divided into four quadrants, the vertical axis being 'Lagged X' from negative two to two, and horizontal axis 'X' from negative two to two. The four quadrants are shaded in blue an green, and each has a white box with a label indicating whether each 'Lagged X' and 'Standardized X' are greater than or less than zero. A handful of crossed diamonds are plotted, spreading from the top left to bottom right, with most of them lying in those two quadrants."}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
 
 ggplot() + 
