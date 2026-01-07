@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 1 A first lesson about R | Crime Mapping in R</title>
   <meta name="description" content="Worksheets for labs of Crime Mapping course" />
-  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.46 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 1 A first lesson about R | Crime Mapping in R" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2025-03-14" />
+<meta name="date" content="2026-01-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -60,14 +60,15 @@
 <script src="libs/proj4-2.6.2/proj4.min.js"></script>
 <script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
 <link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-<script src="libs/leaflet-binding-2.2.2/leaflet.js"></script>
+<script src="libs/leaflet-binding-2.2.3/leaflet.js"></script>
 <script src="libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
-<script src="libs/leaflet-providers-plugin-2.2.2/leaflet-providers-plugin.js"></script>
+<script src="libs/leaflet-providers-plugin-2.2.3/leaflet-providers-plugin.js"></script>
 
 
 <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -77,7 +78,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -252,28 +253,29 @@ div.csl-indent {
 <li class="chapter" data-level="4" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html"><i class="fa fa-check"></i><b>4</b> Performing spatial operations in R</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#criminality-of-place"><i class="fa fa-check"></i><b>4.1</b> Criminality of place</a></li>
-<li class="chapter" data-level="4.2" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#getting-data-of-this-week"><i class="fa fa-check"></i><b>4.2</b> Getting data of this week</a>
+<li class="chapter" data-level="4.2" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#spatial-operations"><i class="fa fa-check"></i><b>4.2</b> Spatial operations</a></li>
+<li class="chapter" data-level="4.3" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#download-some-boundary-data-for-relevant-wards"><i class="fa fa-check"></i><b>4.3</b> Download some boundary data for relevant wards</a></li>
+<li class="chapter" data-level="4.4" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-1-first-spatial-operation-union"><i class="fa fa-check"></i><b>4.4</b> Activity 1: First spatial operation: union</a>
 <ul>
-<li class="chapter" data-level="4.2.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-1-subsetting-using-pattern-matching"><i class="fa fa-check"></i><b>4.2.1</b> Activity 1: Subsetting using pattern matching</a></li>
-<li class="chapter" data-level="4.2.2" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-2-pattern-matching-to-find-city-centre-premises"><i class="fa fa-check"></i><b>4.2.2</b> Activity 2: Pattern matching to find city centre premises</a></li>
+<li class="chapter" data-level="4.4.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#meet-a-new-format-of-shapefile-geojson"><i class="fa fa-check"></i><b>4.4.1</b> Meet a new format of shapefile: geojson</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#geocoding-from-an-address"><i class="fa fa-check"></i><b>4.3</b> Geocoding from an address</a>
+<li class="chapter" data-level="4.5" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#getting-open-data-from-the-city"><i class="fa fa-check"></i><b>4.5</b> Getting open data from the city</a></li>
+<li class="chapter" data-level="4.6" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#what-is-geocoding-and-how-can-we-use-addresses-to-put-venues-on-the-map"><i class="fa fa-check"></i><b>4.6</b> What is geocoding and how can we use addresses to put venues on the map?</a>
 <ul>
-<li class="chapter" data-level="4.3.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-3-getting-address-from-post-code-using-an-api"><i class="fa fa-check"></i><b>4.3.1</b> Activity 3: Getting address from post code using an API</a></li>
+<li class="chapter" data-level="4.6.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-2-subsetting-using-pattern-matching"><i class="fa fa-check"></i><b>4.6.1</b> Activity 2: Subsetting using pattern matching</a></li>
+<li class="chapter" data-level="4.6.2" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-3-pattern-matching-to-find-city-centre-premises"><i class="fa fa-check"></i><b>4.6.2</b> Activity 3: Pattern matching to find city centre premises</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#making-interactive-maps-with-leaflet"><i class="fa fa-check"></i><b>4.4</b> Making interactive maps with leaflet</a>
+<li class="chapter" data-level="4.7" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#geocoding-from-an-address"><i class="fa fa-check"></i><b>4.7</b> Geocoding from an address</a></li>
+<li class="chapter" data-level="4.8" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#making-interactive-maps-with-leaflet"><i class="fa fa-check"></i><b>4.8</b> Making interactive maps with leaflet</a>
 <ul>
-<li class="chapter" data-level="4.4.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-4-making-an-interactive-map"><i class="fa fa-check"></i><b>4.4.1</b> Activity 4: Making an interactive map</a></li>
+<li class="chapter" data-level="4.8.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-4-making-an-interactive-map"><i class="fa fa-check"></i><b>4.8.1</b> Activity 4: Making an interactive map</a></li>
+<li class="chapter" data-level="4.8.2" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#coordinate-reference-systems-revisited"><i class="fa fa-check"></i><b>4.8.2</b> Coordinate reference systems revisited</a></li>
+<li class="chapter" data-level="4.8.3" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-5-subset-points-to-those-within-a-polygon"><i class="fa fa-check"></i><b>4.8.3</b> Activity 5: Subset points to those within a polygon</a></li>
+<li class="chapter" data-level="4.8.4" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-6-building-buffers"><i class="fa fa-check"></i><b>4.8.4</b> Activity 6: Building buffers</a></li>
+<li class="chapter" data-level="4.8.5" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-7-counting-points-in-polygon"><i class="fa fa-check"></i><b>4.8.5</b> Activity 7: Counting Points in Polygon</a></li>
 </ul></li>
-<li class="chapter" data-level="4.5" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#spatial-operations"><i class="fa fa-check"></i><b>4.5</b> Spatial operations</a>
-<ul>
-<li class="chapter" data-level="4.5.1" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#coordinate-reference-systems-revisited"><i class="fa fa-check"></i><b>4.5.1</b> Coordinate reference systems revisited</a></li>
-<li class="chapter" data-level="4.5.2" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#meet-a-new-format-of-shapefile-geojson"><i class="fa fa-check"></i><b>4.5.2</b> Meet a new format of shapefile: geojson</a></li>
-<li class="chapter" data-level="4.5.3" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-5-subset-points-to-those-within-a-polygon"><i class="fa fa-check"></i><b>4.5.3</b> Activity 5: Subset points to those within a polygon</a></li>
-<li class="chapter" data-level="4.5.4" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-6-building-buffers"><i class="fa fa-check"></i><b>4.5.4</b> Activity 6: Building buffers</a></li>
-<li class="chapter" data-level="4.5.5" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-7-counting-points-in-polygon"><i class="fa fa-check"></i><b>4.5.5</b> Activity 7: Counting Points in Polygon</a></li>
-</ul></li>
-<li class="chapter" data-level="4.6" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#summary-3"><i class="fa fa-check"></i><b>4.6</b> Summary</a></li>
+<li class="chapter" data-level="4.9" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#activity-8-combo"><i class="fa fa-check"></i><b>4.9</b> Activity 8: Combo!</a></li>
+<li class="chapter" data-level="4.10" data-path="performing-spatial-operations-in-r.html"><a href="performing-spatial-operations-in-r.html#summary-3"><i class="fa fa-check"></i><b>4.10</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="more-on-thematic-maps.html"><a href="more-on-thematic-maps.html"><i class="fa fa-check"></i><b>5</b> More on thematic maps</a>
 <ul>
@@ -298,7 +300,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="5.5.1" data-path="more-on-thematic-maps.html"><a href="more-on-thematic-maps.html#activity-9-cartograms"><i class="fa fa-check"></i><b>5.5.1</b> Activity 9: Cartograms</a></li>
 </ul></li>
-<li class="chapter" data-level="5.6" data-path="more-on-thematic-maps.html"><a href="more-on-thematic-maps.html#references-and-further-reading"><i class="fa fa-check"></i><b>5.6</b> References and further reading</a>
+<li class="chapter" data-level="5.6" data-path="more-on-thematic-maps.html"><a href="more-on-thematic-maps.html#summary-4"><i class="fa fa-check"></i><b>5.6</b> Summary</a>
 <ul>
 <li class="chapter" data-level="5.6.1" data-path="more-on-thematic-maps.html"><a href="more-on-thematic-maps.html#binning"><i class="fa fa-check"></i><b>5.6.1</b> Binning</a></li>
 <li class="chapter" data-level="5.6.2" data-path="more-on-thematic-maps.html"><a href="more-on-thematic-maps.html#maup"><i class="fa fa-check"></i><b>5.6.2</b> MAUP</a></li>
@@ -322,78 +324,83 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="6.4.1" data-path="studying-spatial-point-patterns.html"><a href="studying-spatial-point-patterns.html#activity-5-spatial-point-pattern-processes-along-networks"><i class="fa fa-check"></i><b>6.4.1</b> Activity 5: Spatial point pattern processes along networks</a></li>
 </ul></li>
-<li class="chapter" data-level="6.5" data-path="studying-spatial-point-patterns.html"><a href="studying-spatial-point-patterns.html#recap"><i class="fa fa-check"></i><b>6.5</b> Recap</a></li>
+<li class="chapter" data-level="6.5" data-path="studying-spatial-point-patterns.html"><a href="studying-spatial-point-patterns.html#summary-5"><i class="fa fa-check"></i><b>6.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html"><i class="fa fa-check"></i><b>7</b> Global and local spatial autocorrelation</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#get-data"><i class="fa fa-check"></i><b>7.1</b> Get data</a></li>
-<li class="chapter" data-level="7.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#what-is-a-neighbour"><i class="fa fa-check"></i><b>7.2</b> What is a neighbour?</a></li>
-<li class="chapter" data-level="7.3" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#putting-neighbourness-in-our-analysis---constructing-a-spatial-weight-matrix"><i class="fa fa-check"></i><b>7.3</b> Putting ‘neighbourness’ in our analysis - constructing a spatial weight matrix</a>
+<li class="chapter" data-level="7.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#get-data"><i class="fa fa-check"></i><b>7.1</b> Get data</a>
 <ul>
-<li class="chapter" data-level="7.3.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-1-burglaries-in-manchester-city-centre-ward"><i class="fa fa-check"></i><b>7.3.1</b> Activity 1: Burglaries in Manchester City Centre ward</a></li>
-<li class="chapter" data-level="7.3.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-2-manually-explore-neighbours"><i class="fa fa-check"></i><b>7.3.2</b> Activity 2: Manually explore neighbours</a></li>
+<li class="chapter" data-level="7.1.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#what-is-a-neighbour"><i class="fa fa-check"></i><b>7.1.1</b> What is a neighbour?</a></li>
 </ul></li>
-<li class="chapter" data-level="7.4" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#creating-a-list-of-neighbours"><i class="fa fa-check"></i><b>7.4</b> Creating a list of neighbours</a>
+<li class="chapter" data-level="7.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#putting-neighbourness-in-our-analysis---constructing-a-spatial-weight-matrix"><i class="fa fa-check"></i><b>7.2</b> Putting ‘neighbourness’ in our analysis - constructing a spatial weight matrix</a>
 <ul>
-<li class="chapter" data-level="7.4.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-3-creating-a-neighbour-list"><i class="fa fa-check"></i><b>7.4.1</b> Activity 3: Creating a neighbour list</a></li>
+<li class="chapter" data-level="7.2.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-1-burglaries-in-manchester-city-centre-ward"><i class="fa fa-check"></i><b>7.2.1</b> Activity 1: Burglaries in Manchester City Centre ward</a></li>
+<li class="chapter" data-level="7.2.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-2-manually-explore-neighbours"><i class="fa fa-check"></i><b>7.2.2</b> Activity 2: Manually explore neighbours</a></li>
 </ul></li>
-<li class="chapter" data-level="7.5" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#generating-the-weight-matrix"><i class="fa fa-check"></i><b>7.5</b> Generating the weight matrix</a>
+<li class="chapter" data-level="7.3" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#creating-a-list-of-neighbours"><i class="fa fa-check"></i><b>7.3</b> Creating a list of neighbours</a>
 <ul>
-<li class="chapter" data-level="7.5.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-4-building-a-spatial-weights-matrix"><i class="fa fa-check"></i><b>7.5.1</b> Activity 4: Building a spatial weights matrix</a></li>
-<li class="chapter" data-level="7.5.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-5-row-standardised-spatial-weights-matrix"><i class="fa fa-check"></i><b>7.5.2</b> Activity 5: Row standardised spatial weights matrix</a></li>
-<li class="chapter" data-level="7.5.3" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-6-spatial-weights-list"><i class="fa fa-check"></i><b>7.5.3</b> Activity 6: Spatial weights list</a></li>
+<li class="chapter" data-level="7.3.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-3-creating-a-neighbour-list"><i class="fa fa-check"></i><b>7.3.1</b> Activity 3: Creating a neighbour list</a></li>
 </ul></li>
-<li class="chapter" data-level="7.6" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#morans-i"><i class="fa fa-check"></i><b>7.6</b> Moran’s I</a>
+<li class="chapter" data-level="7.4" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#generating-the-weight-matrix"><i class="fa fa-check"></i><b>7.4</b> Generating the weight matrix</a>
 <ul>
-<li class="chapter" data-level="7.6.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-7-calculate-morans-i"><i class="fa fa-check"></i><b>7.6.1</b> Activity 7: Calculate Moran’s I</a></li>
-<li class="chapter" data-level="7.6.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-8-moran-scatter-plot"><i class="fa fa-check"></i><b>7.6.2</b> Activity 8: Moran scatter plot</a></li>
+<li class="chapter" data-level="7.4.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-4-building-a-spatial-weights-matrix"><i class="fa fa-check"></i><b>7.4.1</b> Activity 4: Building a spatial weights matrix</a></li>
+<li class="chapter" data-level="7.4.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-5-row-standardised-spatial-weights-matrix"><i class="fa fa-check"></i><b>7.4.2</b> Activity 5: Row standardised spatial weights matrix</a></li>
+<li class="chapter" data-level="7.4.3" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-6-spatial-weights-list"><i class="fa fa-check"></i><b>7.4.3</b> Activity 6: Spatial weights list</a></li>
 </ul></li>
-<li class="chapter" data-level="7.7" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#local-spatial-autocorrelation"><i class="fa fa-check"></i><b>7.7</b> Local spatial autocorrelation</a>
+<li class="chapter" data-level="7.5" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#morans-i"><i class="fa fa-check"></i><b>7.5</b> Moran’s I</a>
 <ul>
-<li class="chapter" data-level="7.7.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-9-get-data-and-weights-for-all-manchester"><i class="fa fa-check"></i><b>7.7.1</b> Activity 9: Get data and weights for all Manchester</a></li>
-<li class="chapter" data-level="7.7.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-10-exploring-a-local-indicator-of-spatial-association-local-morans-i."><i class="fa fa-check"></i><b>7.7.2</b> Activity 10: Exploring a Local Indicator of Spatial Association: Local Moran’s I.</a></li>
+<li class="chapter" data-level="7.5.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-7-calculate-morans-i"><i class="fa fa-check"></i><b>7.5.1</b> Activity 7: Calculate Moran’s I</a></li>
+<li class="chapter" data-level="7.5.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-8-moran-scatter-plot"><i class="fa fa-check"></i><b>7.5.2</b> Activity 8: Moran scatter plot</a></li>
+<li class="chapter" data-level="7.5.3" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#a-note-the-rgeoda-and-sfweight-packages"><i class="fa fa-check"></i><b>7.5.3</b> A note: the <code>rgeoda</code> and <code>sfweight</code> packages</a></li>
 </ul></li>
+<li class="chapter" data-level="7.6" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#local-spatial-autocorrelation"><i class="fa fa-check"></i><b>7.6</b> Local spatial autocorrelation</a>
+<ul>
+<li class="chapter" data-level="7.6.1" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-9-get-data-and-weights-for-all-manchester"><i class="fa fa-check"></i><b>7.6.1</b> Activity 9: Get data and weights for all Manchester</a></li>
+<li class="chapter" data-level="7.6.2" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#activity-10-exploring-a-local-indicator-of-spatial-association-local-morans-i."><i class="fa fa-check"></i><b>7.6.2</b> Activity 10: Exploring a Local Indicator of Spatial Association: Local Moran’s I.</a></li>
+<li class="chapter" data-level="7.6.3" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#creating-a-lisa-map"><i class="fa fa-check"></i><b>7.6.3</b> Creating a LISA map</a></li>
+</ul></li>
+<li class="chapter" data-level="7.7" data-path="global-and-local-spatial-autocorrelation.html"><a href="global-and-local-spatial-autocorrelation.html#summary-6"><i class="fa fa-check"></i><b>7.7</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html"><i class="fa fa-check"></i><b>8</b> Regression analysis (a refresher)</a>
 <ul>
 <li class="chapter" data-level="8.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#introduction-2"><i class="fa fa-check"></i><b>8.1</b> Introduction</a>
 <ul>
-<li class="chapter" data-level="8.1.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-1-getting-some-homicide-data"><i class="fa fa-check"></i><b>8.1.1</b> Activity 1: Getting some homicide data</a></li>
-<li class="chapter" data-level="8.1.2" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-2-familiarise-yourself-with-the-data"><i class="fa fa-check"></i><b>8.1.2</b> Activity 2: Familiarise yourself with the data</a></li>
+<li class="chapter" data-level="8.1.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-1-familiarise-yourself-with-the-data"><i class="fa fa-check"></i><b>8.1.1</b> Activity 1: Familiarise yourself with the data</a></li>
 </ul></li>
 <li class="chapter" data-level="8.2" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#motivating-regression"><i class="fa fa-check"></i><b>8.2</b> Motivating regression</a>
 <ul>
-<li class="chapter" data-level="8.2.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-3-guessing-games"><i class="fa fa-check"></i><b>8.2.1</b> Activity 3: Guessing games</a></li>
+<li class="chapter" data-level="8.2.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-2-guessing-games"><i class="fa fa-check"></i><b>8.2.1</b> Activity 2: Guessing games</a></li>
 </ul></li>
 <li class="chapter" data-level="8.3" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#fitting-a-simple-regression-model"><i class="fa fa-check"></i><b>8.3</b> Fitting a simple regression model</a>
 <ul>
-<li class="chapter" data-level="8.3.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-4-regressing-homicide-rate-on-deprivation-score"><i class="fa fa-check"></i><b>8.3.1</b> Activity 4: Regressing homicide rate on deprivation score</a></li>
+<li class="chapter" data-level="8.3.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-3-regressing-homicide-rate-on-deprivation-score"><i class="fa fa-check"></i><b>8.3.1</b> Activity 3: Regressing homicide rate on deprivation score</a></li>
 </ul></li>
 <li class="chapter" data-level="8.4" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#residuals-revisited-r-squared"><i class="fa fa-check"></i><b>8.4</b> Residuals revisited: R squared</a>
 <ul>
-<li class="chapter" data-level="8.4.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-5-residuals-for-our-homicide-rate-model"><i class="fa fa-check"></i><b>8.4.1</b> Activity 5: Residuals for our homicide rate model</a></li>
+<li class="chapter" data-level="8.4.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-4-residuals-for-our-homicide-rate-model"><i class="fa fa-check"></i><b>8.4.1</b> Activity 4: Residuals for our homicide rate model</a></li>
 </ul></li>
 <li class="chapter" data-level="8.5" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#inference-with-regression"><i class="fa fa-check"></i><b>8.5</b> Inference with regression</a></li>
 <li class="chapter" data-level="8.6" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#fitting-regression-with-categorical-predictors"><i class="fa fa-check"></i><b>8.6</b> Fitting regression with categorical predictors</a>
 <ul>
-<li class="chapter" data-level="8.6.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-6-homicide-rates-in-the-south-v-the-north"><i class="fa fa-check"></i><b>8.6.1</b> Activity 6: Homicide rates in the South v the North</a></li>
+<li class="chapter" data-level="8.6.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-5-homicide-rates-in-the-south-v-the-north"><i class="fa fa-check"></i><b>8.6.1</b> Activity 5: Homicide rates in the South v the North</a></li>
 </ul></li>
 <li class="chapter" data-level="8.7" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#motivating-multiple-regression"><i class="fa fa-check"></i><b>8.7</b> Motivating multiple regression</a></li>
 <li class="chapter" data-level="8.8" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#fitting-and-interpreting-a-multiple-regression-model"><i class="fa fa-check"></i><b>8.8</b> Fitting and interpreting a multiple regression model</a>
 <ul>
-<li class="chapter" data-level="8.8.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-7-better-explaining-homicide-rates"><i class="fa fa-check"></i><b>8.8.1</b> Activity 7: Better explaining homicide rates</a></li>
+<li class="chapter" data-level="8.8.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-6-better-explaining-homicide-rates"><i class="fa fa-check"></i><b>8.8.1</b> Activity 6: Better explaining homicide rates</a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#presenting-your-regression-results."><i class="fa fa-check"></i><b>8.9</b> Presenting your regression results.</a>
 <ul>
-<li class="chapter" data-level="8.9.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-8-plotting-your-results"><i class="fa fa-check"></i><b>8.9.1</b> Activity 8: Plotting your results</a></li>
+<li class="chapter" data-level="8.9.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-7-plotting-your-results"><i class="fa fa-check"></i><b>8.9.1</b> Activity 7: Plotting your results</a></li>
 </ul></li>
 <li class="chapter" data-level="8.10" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#rescaling-input-variables-to-assist-interpretation"><i class="fa fa-check"></i><b>8.10</b> Rescaling input variables to assist interpretation</a></li>
 <li class="chapter" data-level="8.11" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#testing-conditional-hypothesis-interactions"><i class="fa fa-check"></i><b>8.11</b> Testing conditional hypothesis: interactions</a>
 <ul>
-<li class="chapter" data-level="8.11.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-9-interaction-effects"><i class="fa fa-check"></i><b>8.11.1</b> Activity 9: Interaction effects</a></li>
+<li class="chapter" data-level="8.11.1" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#activity-8-interaction-effects"><i class="fa fa-check"></i><b>8.11.1</b> Activity 8: Interaction effects</a></li>
 </ul></li>
 <li class="chapter" data-level="8.12" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#model-building-and-variable-selection"><i class="fa fa-check"></i><b>8.12</b> Model building and variable selection</a></li>
 <li class="chapter" data-level="8.13" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#regression-assumptions"><i class="fa fa-check"></i><b>8.13</b> Regression assumptions</a></li>
+<li class="chapter" data-level="8.14" data-path="regression-analysis-a-refresher.html"><a href="regression-analysis-a-refresher.html#summary-7"><i class="fa fa-check"></i><b>8.14</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="9" data-path="spatial-regression-models.html"><a href="spatial-regression-models.html"><i class="fa fa-check"></i><b>9</b> Spatial regression models</a>
 <ul>
@@ -425,7 +432,7 @@ div.csl-indent {
 <li class="chapter" data-level="9.8.1" data-path="spatial-regression-models.html"><a href="spatial-regression-models.html#activity-7-small-multiples"><i class="fa fa-check"></i><b>9.8.1</b> Activity 7: Small multiples</a></li>
 <li class="chapter" data-level="9.8.2" data-path="spatial-regression-models.html"><a href="spatial-regression-models.html#activity-8-animations"><i class="fa fa-check"></i><b>9.8.2</b> Activity 8: Animations</a></li>
 </ul></li>
-<li class="chapter" data-level="9.9" data-path="spatial-regression-models.html"><a href="spatial-regression-models.html#recap-1"><i class="fa fa-check"></i><b>9.9</b> Recap</a></li>
+<li class="chapter" data-level="9.9" data-path="spatial-regression-models.html"><a href="spatial-regression-models.html#summary-8"><i class="fa fa-check"></i><b>9.9</b> Summary</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -660,7 +667,6 @@ But if you run this code, you will get an error. Let’s see:</p>
 <ol start="3" style="list-style-type: decimal">
 <li><em>data frames</em>: also stores elements but differ from lists because they are defined by their number of columns and rows; the vectors (columns) must be of the same length. Data frames can contain different classes but each column must be of the same class. For example, if you want to combine some related vectors to make a data frame on violent American cities, use the function <code>data.frame()</code>:</li>
 </ol>
-<p><img src="img/df.png" /></p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="a-first-lesson-about-r.html#cb21-1" tabindex="-1"></a><span class="co"># Making some relevant vectors</span></span>
 <span id="cb21-2"><a href="a-first-lesson-about-r.html#cb21-2" tabindex="-1"></a>TopVioCities <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;St. Louis&quot;</span>, <span class="st">&quot;Detroit&quot;</span>, <span class="st">&quot;Baltimore&quot;</span>) <span class="co"># some violent US cities</span></span>
 <span id="cb21-3"><a href="a-first-lesson-about-r.html#cb21-3" tabindex="-1"></a>VioRatePer1k <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">20.8</span>, <span class="fl">20.6</span>, <span class="fl">20.3</span>) <span class="co"># their violence rates per 1,000 persons</span></span>
@@ -803,7 +809,7 @@ A number of the packages we will use belong to a set of packages called <strong>
 ##  1st Qu.:0.4400   1st Qu.:0.1950   1st Qu.:0.415    1st Qu.:0.14271          
 ##  Median :0.4540   Median :0.2800   Median :0.490    Median :0.22620          
 ##  Mean   :0.4538   Mean   :0.3157   Mean   :0.490    Mean   :0.30409          
-##  3rd Qu.:0.4665   3rd Qu.:0.4200   3rd Qu.:0.575    3rd Qu.:0.35694          
+##  3rd Qu.:0.4665   3rd Qu.:0.4200   3rd Qu.:0.575    3rd Qu.:0.35693          
 ##  Max.   :0.5320   Max.   :0.8100   Max.   :0.700    Max.   :1.52230          
 ##                                                     NA&#39;s   :4                
 ##  avg_hatecrimes_per_100k_fbi
@@ -824,14 +830,6 @@ A number of the packages we will use belong to a set of packages called <strong>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="a-first-lesson-about-r.html#cb50-1" tabindex="-1"></a><span class="fu">ggplot</span>(hate_crimes, <span class="fu">aes</span>(<span class="at">x=</span>share_vote_trump, <span class="at">y=</span>avg_hatecrimes_per_100k_fbi)) <span class="sc">+</span></span>
 <span id="cb50-2"><a href="a-first-lesson-about-r.html#cb50-2" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">shape=</span><span class="dv">1</span>) <span class="sc">+</span></span>
 <span id="cb50-3"><a href="a-first-lesson-about-r.html#cb50-3" tabindex="-1"></a>     <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm)</span></code></pre></div>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~
-## x&#39;</code></pre>
-<pre><code>## Warning: Removed 1 row containing non-finite
-## outside the scale range
-## (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 1 row containing missing
-## values or values outside the scale
-## range (`geom_point()`).</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/scatterplotofhatecrimes-1.png" width="672" /></p>
 <p>What do you think this graphic is telling you? Discuss with the person next to you.</p>
 <p>Graphing is very powerful in R, and much of the spatial visualisation we will produce throughout the module will build on this. If you are not already familiar with this, I recommend a read of the data visualisation chapter of R for Data Science <a href="https://r4ds.had.co.nz/data-visualisation.html">https://r4ds.had.co.nz/data-visualisation.html</a></p>
@@ -889,42 +887,42 @@ Now, go back to “File” and select “New project…”</p>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/01-intro.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["crime_mapping_textbook.pdf", "crime_mapping_textbook.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/01-intro.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["crime_mapping_textbook.pdf", "crime_mapping_textbook.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>

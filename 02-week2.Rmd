@@ -198,7 +198,7 @@ inlinecode2 <- print(crimes$latitude[1])
 inlinecode3 <- print(crimes$location[1])
 inlinecode4 <- print(crimes$location[nrow(crimes)])
 inlinecode5 <- print(gsub("On or near ","",crimes$location[nrow(crimes)]))
-inlinecode6 <- print(crimes$lsoa_name[1])
+inlinecode6 <- print(crimes$lsoa21nm[1])
 ```
 
 
@@ -228,7 +228,7 @@ What more? You may also have seen the column `lsao_name` seems to have some spat
 head(crimes, n = 1)
 ```
 
-You see the value for LSOA name is **`r inlinecode6``r print(crimes$lsoa_name[1])`** - Bolton we know is a Borough of Greater Manchester, but what is the 001 for ?
+You see the value for LSOA name is **`r inlinecode6``r print(crimes$lsoa21nm[1])`** - Bolton we know is a Borough of Greater Manchester, but what is the 001 for ?
 
 Well it denotes a sparticular geographical sub-unit within Bolton called a **Lower Layer Super Output Area**. This is a unit of [UK Census Geography](https://www.ons.gov.uk/methodology/geography/ukgeographies/censusgeography). The basic unit for Census Geography is an 'Outout area' - this is the resolution at which we can access data from the UK Census. We will be making use of census data later in the course. The Ourput Area (OA) is therefore the smallest unit we could use. Normally, in this module, we will be using a slightly larger version - the Lower Super Output Area (LSOA). 
 
@@ -381,7 +381,7 @@ df
 
 Load ggplot2 package
 
-```{r, eval=FALSE}}
+```{r, eval=FALSE}
 library(ggplot2)
 ```
 

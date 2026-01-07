@@ -616,12 +616,12 @@ A nice way of understanding interactions effects is to think of  'interaction' m
 
 ### Activity 8: Interaction effects
 
-How do we do this in R? One way is to use the following notation in the formula argument. Notice how we have added a third term `RD90:SOUTH_f`, which is asking R to test the conditional hypothesis that resource deprivation may have a different impact on homicide for southern and northern counties.
+How do we do this in R? One way is to use the following notation in the formula argument. Notice how we have added a third term `RD90:SOUTH_labelled`, which is asking R to test the conditional hypothesis that resource deprivation may have a different impact on homicide for southern and northern counties.
 
 ```{r}
-fit_5 <- lm(HR90 ~ RD90 + SOUTH_f + RD90:SOUTH_f , data=ncovr)
+fit_5 <- lm(HR90 ~ RD90 + SOUTH_labelled + RD90:SOUTH_labelled , data=ncovr)
 # which is equivalent to: 
-# fit_5 <- lm(HR90 ~ RD90 * SOUTH_f , data=ncovr)
+# fit_5 <- lm(HR90 ~ RD90 * SOUTH_labelled , data=ncovr)
 summary(fit_5)
 ```
 
@@ -641,7 +641,7 @@ Essentially what happens is that the regression coefficients that get printed ar
 
 + The intercept still represents the predicted score of homicide for southern counties and have a score of 0 in resource deprivation (as before).
 
-+ The coefficient of *SOUTH_f1* can now be thought of as the difference between the predicted score of homicide rate for northern counties *that have a score of 0 in resource deprivation* and northern counties *that have a score of 0 in resource deprivation*.
++ The coefficient of *SOUTH_labelledSOUTH* can now be thought of as the difference between the predicted score of homicide rate for northern counties *that have a score of 0 in resource deprivation* and northern counties *that have a score of 0 in resource deprivation*.
 
 + The coefficient of *RD90* now becomes the comparison of mean homicide rate *for southern* counties who differ by one point in resource deprivation.
 

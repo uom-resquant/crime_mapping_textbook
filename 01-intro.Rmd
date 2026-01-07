@@ -117,7 +117,7 @@ In the previous activity, you opened up the 'script' pane. We now write some cod
 
 To do this, go to your open version of `R Studio`, and type in the script pane the following: 
 
-```{r hellowrold, eval=F}
+```{r hellowrold, eval=FALSE}
 print("Hello world!")
 ```
 
@@ -190,7 +190,7 @@ The answer is further below, after the note:
 
 **NOTE:** `R` is case-sensitive! For example:
 
-```{r eval=FALSE}
+```{r, eval=FALSE}
 # Calculating the logarithm 
 Log(100)
 

@@ -31,6 +31,7 @@ library(dplyr)
 library(spatstat.geom)
 library(spatstat.explore)
 library(spatstat.random)
+library(spatstat.linnet)
 library(terra)
 library(leaflet)
 ```
@@ -371,11 +372,11 @@ In `spatstat` a point pattern on a linear network is represented by an object of
 
 ```{r}
 data("chicago")
-plot(chicago)
 summary(chicago)
 ```
 
 An `lpp` object contains the linear network information, the spatial coordinates of the data points, and any number of columns of *marks* (in this case the mark is telling us the type of crime we are dealing with). It also contains the local coordinates `seg` and `tp` for the data points. The local coordinate `seg` is an integer identifying the particular street segment the data point is located in. A segment is each of the sections of a street between two vertices (marking the intersection with another segment). The local coordinate `tp` is a real number between 0 and 1 indicating the position of the point within the segement: `tp=0` corresponds to the first endpoint and `tp=1` correspond to the second endpoint.
+
 
 The visual inspection of the map suggest that the intensity of crime along the network is not spatially uniform. Crime seems to be concentrated in particular segments. Like we did before we can estimate the density of data points along the networks using Kernel estimation (with the `density.lpp()` function), only now we only look at the street segments (rather than areas of the space that are outside the segments). The authors of the package are planning to introduce methods for automatic bandwidth selection but for now this is not possible, so we have to select a bandwidth. We could for example select 60 feet.
 

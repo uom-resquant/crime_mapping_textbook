@@ -87,7 +87,7 @@ burglaries_per_lsoa <- rename(burglaries_per_lsoa, burglary = n)
 # Let's add them back with a value of 0 for the burglary variable
 missing_lsoas <- manchester_lsoa %>%
   filter(!lsoa21cd %in% burglaries_per_lsoa$lsoa21cd) %>%
-  select(lsoa21cd) %>%
+  dplyr::select(lsoa21cd) %>%
   mutate(burglary = 0)
 
 burglaries_per_lsoa <- rbind(burglaries_per_lsoa, missing_lsoas)
