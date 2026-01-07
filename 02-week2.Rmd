@@ -439,7 +439,7 @@ We can add further specifications within the `aes()` (aesthetics) function, wher
 
 df <- crimes %>% 
   filter(crime_type %in% c("Robbery", "Shoplifting", "Theft from the person"), 
-         last_outcome_category %in% df$last_outcome_category[1:5]) %>% 
+         last_outcome_category %in% c("Offender given penalty notice", "Local resolution", "Offender given a caution", "Unable to prosecute suspect")) %>% 
   group_by(crime_type, last_outcome_category) %>% 
   count() 
 
