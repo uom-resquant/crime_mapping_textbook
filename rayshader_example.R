@@ -16,5 +16,5 @@ asb_map <- ggplot(sf_mcr_asb, aes(lng, lat)) +                        #define da
   scale_fill_gradientn(colours = c("white","red"), name = "Frequency")    #add shading based on number of ASB incidents
 
 
-plot_gg(asb_map, shadow_intensity = 1)
+plot_gg(asb_map, shadow_intensity = 0.5)
 

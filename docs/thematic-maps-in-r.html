@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2026-01-07" />
+<meta name="date" content="2026-02-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -472,7 +472,7 @@ div.csl-indent {
 <p>You may not remember all of what you did to generate that file so let’s not waste time and just cut and paste from below (but try to remember what each of the lines of code is doing and if you are not clear look at the notes from last week). Imagine you had to do all of this again by pointing and clicking in a graphical user interface rather than just sending the code to the console! As you will see time and time again, code in the end is a much more efficient way of talking to a computer.</p>
 <div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="thematic-maps-in-r.html#cb110-1" tabindex="-1"></a>crimes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/2019-06-greater-manchester-street.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 32058 Columns: 12
-## ── Column specification ─────────────────────────────────────
+## ── Column specification ────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (9): Crime ID, Month, Reported by, Falls within, Location, LSOA code, LS...
 ## dbl (2): Longitude, Latitude
@@ -676,7 +676,7 @@ In specific to crime mapping, there is an ongoing issue of the <em>denominators 
 <p>Use <code>read_csv()</code> function from the <code>readr</code> package to import this data.</p>
 <div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="thematic-maps-in-r.html#cb142-1" tabindex="-1"></a>census_respop <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/census2021-ts001-lsoa.csv&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">clean_names</span>()</span></code></pre></div>
 <pre><code>## Rows: 35672 Columns: 6
-## ── Column specification ─────────────────────────────────────
+## ── Column specification ────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (2): geography, geography code
 ## dbl (4): date, Residence type: Total; measures: Value, Residence type: Lives...
@@ -685,7 +685,7 @@ In specific to crime mapping, there is an ongoing issue of the <em>denominators 
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="thematic-maps-in-r.html#cb144-1" tabindex="-1"></a>census_workdaypop <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/WD001_lsoa.csv&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">clean_names</span>()</span></code></pre></div>
 <pre><code>## Rows: 35672 Columns: 3
-## ── Column specification ─────────────────────────────────────
+## ── Column specification ────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (2): Lower layer Super Output Areas Code, Lower layer Super Output Areas...
 ## dbl (1): Population Density

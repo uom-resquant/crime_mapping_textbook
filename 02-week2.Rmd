@@ -289,6 +289,9 @@ class(crimes_sf)
 
 You might also notice something else that is different between crimes and crimes_sf. Have a look at the dimension (hint look in your 'Environment' tab). Do you see? Discuss what you think is different with your neighour or one of the teaching team. 
 
+
+> One thing to note is that if you have missing values in your coordinates, you have to deal with these before converting your dataframe into an sf object. You can remove these, look up the coordinates and add them manually (if known), or, if you would like to include these rows in your dataframe (but be aware that you won't be able to map them) you can set the parameter `na.fail` to `FALSE` in the `st_as_sf()` function. This will allow you to keep these rows in your dataframe, but they won't be have any coordinate values, and therefore won't be mapped.
+
 #### Activity 4: Mapping our points
 
 Now that we have this sf object, how can we map it? I mentioned before about the graphical package `ggplot2`. We can use this, and its syntax, in order to map spatial data using the `geom_sf()` geometry. 

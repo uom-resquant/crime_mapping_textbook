@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2026-01-07" />
+<meta name="date" content="2026-02-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -577,7 +577,7 @@ This will be important later on when we are linking data from different projecti
 <p>Or, if you know the path to your file, you can code it in there, within quotation marks:</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="making-maps-in-r.html#cb53-1" tabindex="-1"></a>crimes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/crimes_w_lsoa_codes_attached.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 32058 Columns: 12
-## ── Column specification ─────────────────────────────────────
+## ── Column specification ────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (9): Crime.ID, Month, Reported.by, Falls.within, Location, Crime.type, L...
 ## dbl (2): Longitude, Latitude
@@ -712,6 +712,9 @@ This will be important later on when we are linking data from different projecti
 <div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="making-maps-in-r.html#cb75-1" tabindex="-1"></a><span class="fu">class</span>(crimes_sf)</span></code></pre></div>
 <pre><code>## [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
 <p>You might also notice something else that is different between crimes and crimes_sf. Have a look at the dimension (hint look in your ‘Environment’ tab). Do you see? Discuss what you think is different with your neighour or one of the teaching team.</p>
+<blockquote>
+<p>One thing to note is that if you have missing values in your coordinates, you have to deal with these before converting your dataframe into an sf object. You can remove these, look up the coordinates and add them manually (if known), or, if you would like to include these rows in your dataframe (but be aware that you won’t be able to map them) you can set the parameter <code>na.fail</code> to <code>FALSE</code> in the <code>st_as_sf()</code> function. This will allow you to keep these rows in your dataframe, but they won’t be have any coordinate values, and therefore won’t be mapped.</p>
+</blockquote>
 </div>
 <div id="activity-4-mapping-our-points" class="section level4 hasAnchor" number="2.4.1.2">
 <h4><span class="header-section-number">2.4.1.2</span> Activity 4: Mapping our points<a href="making-maps-in-r.html#activity-4-mapping-our-points" class="anchor-section" aria-label="Anchor link to header"></a></h4>

@@ -157,9 +157,16 @@ As always, there are a few ways you can download this data set. On the manual si
 
 So without dragging this on any further, let's read in the licensed premises data directly from the web: 
 
-```{r}
+```{r, eval = FALSE}
 lic_prem <- read_csv("http://www.manchester.gov.uk/open/download/downloads/id/169/licensed_premises.csv")
 ```
+```{r, echo = FALSE}
+
+lic_prem <- read_csv("data/LicensedPremises.csv")
+
+```
+
+
 
 You can always check if this worked by looking to your global environment on the right hand side and seeing if this 'lic_prem' object has appeared. If it has, you should see it has `r I(nrow(lic_prem))` observations (rows), and `r I(ncol(lic_prem))` variables (columns). 
 

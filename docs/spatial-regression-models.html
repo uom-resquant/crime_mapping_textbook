@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2026-01-07" />
+<meta name="date" content="2026-02-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -490,7 +490,7 @@ div.csl-indent {
 ## old-style crs object detected; please recreate object with a recent sf::st_crs()
 ## old-style crs object detected; please recreate object with a recent sf::st_crs()
 ## old-style crs object detected; please recreate object with a recent sf::st_crs()</code></pre>
-<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-290-1.png" width="672" /></p>
+<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-291-1.png" width="672" /></p>
 <p>Do you think there is spatial patterning for homicide?</p>
 <p>Note: you may be seeing a warning that says “old-style crs object detected; please recreate object with a recent sf::st_crs()”. To remove it we can simply reproject our object:</p>
 <div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="spatial-regression-models.html#cb456-1" tabindex="-1"></a><span class="co"># reproject object to WGS84</span></span>
@@ -537,7 +537,7 @@ div.csl-indent {
 <span id="cb463-14"><a href="spatial-regression-models.html#cb463-14" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb463-15"><a href="spatial-regression-models.html#cb463-15" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">col_alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
 <span id="cb463-16"><a href="spatial-regression-models.html#cb463-16" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="st">&quot;Residuals&quot;</span>, <span class="at">size =</span> <span class="fl">0.7</span>)</span></code></pre></div>
-<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-296-1.png" width="672" /></p>
+<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-297-1.png" width="672" /></p>
 <p>Notice the spatial patterning of areas of over-prediction (negative residuals, or blue tones) and under-prediction (positive residuals, or brown tones). This visual inspection of the residuals is telling you that spatial autocorrelation may be present here. This, however, would require a more formal test.</p>
 </div>
 <div id="activity-2-spatial-autocorrelation-again" class="section level3 hasAnchor" number="9.2.2">
@@ -607,7 +607,7 @@ div.csl-indent {
 <span id="cb469-7"><a href="spatial-regression-models.html#cb469-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
 <span id="cb469-8"><a href="spatial-regression-models.html#cb469-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;Region&quot;</span>) <span class="sc">+</span></span>
 <span id="cb469-9"><a href="spatial-regression-models.html#cb469-9" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Distribution of residuals&quot;</span>)</span></code></pre></div>
-<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-300-1.png" width="672" /></p>
+<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-301-1.png" width="672" /></p>
 <p>What do you see in this plot? And, critically, what does it mean? What is this telling you about the predicted values that result from our model? (Remember what a residual is: the difference between the observed values and the predicted values).</p>
 <p>There are formal tests that one can use to further explore these issues. The paper by Bollen et al. (2001) mentions them (Chow tests). But those are beyond the scope of this course. Sufficient to say that, as Bollen et al. (2001), we are going to split our analysis and run them separately for the Southern and the Northern states. We have covered the <code>filter()</code> function from <code>dplyr</code> to split datasets based on values of a variable. But to split <code>sf</code> objects it is better to rely on the more generic subset function, since <code>filter()</code> doesn’t accommodate well the column with the geographic information that <code>sf</code> provides.</p>
 <div class="sourceCode" id="cb470"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb470-1"><a href="spatial-regression-models.html#cb470-1" tabindex="-1"></a>ncovr_s <span class="ot">&lt;-</span> <span class="fu">subset</span>(ncovr, SOUTH <span class="sc">==</span> <span class="dv">1</span>)</span>
@@ -937,7 +937,7 @@ div.csl-indent {
 <span id="cb500-6"><a href="spatial-regression-models.html#cb500-6" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb500-7"><a href="spatial-regression-models.html#cb500-7" tabindex="-1"></a>  <span class="fu">tm_borders</span>() <span class="sc">+</span></span>
 <span id="cb500-8"><a href="spatial-regression-models.html#cb500-8" tabindex="-1"></a>  <span class="fu">tm_facets</span>(<span class="at">by =</span> <span class="st">&quot;month&quot;</span>, <span class="at">free.coords =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-315-1.png" width="672" /></p>
+<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-316-1.png" width="672" /></p>
 <p>We can now see how ASB varies across the months, and start to think about how this might change over seasons for example with seasonal patterns in routine activities!</p>
 <p><em>PS: you can also use the <code>facet_wrap()</code> and <code>facet_grid()</code> functions in <code>ggplot2</code> package if you prefer - remember there are always many ways to solve the same problem in R!</em></p>
 <p>Pretty cool though, eh? Well just wait until the next section…!</p>
@@ -958,7 +958,7 @@ div.csl-indent {
 <p>Now, finally, we can animate this graph. Take the object of the static graph (anim) and add a form of transition, which will be used to animate the graph. In this case, we can use <code>transition_manual()</code>. This transition splits your data into multiple frames based on the levels in a given column, much like how faceting splits up the data in multiple panels. It then shifts between frames, with each frame representing one level of the frame variable. Frames are the unquoted name of the column holding the frame levels in the data. You can then use <code>current_frame</code> to dynamically label the graph:</p>
 <div class="sourceCode" id="cb504"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb504-1"><a href="spatial-regression-models.html#cb504-1" tabindex="-1"></a>anim <span class="sc">+</span> <span class="fu">transition_time</span>(date_month) <span class="sc">+</span></span>
 <span id="cb504-2"><a href="spatial-regression-models.html#cb504-2" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Month: {frame_time}&quot;</span>)</span></code></pre></div>
-<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-319-1.gif" /><!-- --></p>
+<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-320-1.gif" /><!-- --></p>
 <p>How cool is that!?</p>
 <p>You can now make animations about transition over time to impress your friends, family, future employers, and so on. What a way to end this course!</p>
 </div>
