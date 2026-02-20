@@ -11,13 +11,13 @@ Last week we provided you with an introduction to regression analysis with R. Th
 Before we do any of this, we need to load the libraries we will use today:
 
 ```{r, message=FALSE, warning=FALSE}
+library(geodaData)
 library(sf)
+library(spdep)
 library(tmap)
 library(ggplot2)
-library(sp)
-library(spdep)
 library(spatialreg)
-library(readr)
+library(readxl)
 library(janitor)
 library(dplyr)
 library(gganimate)
@@ -25,32 +25,41 @@ library(lubridate)
 # library(transformr) - this needs to be installed, but doesn't need loading
 ```
 
-Then we will be using the ncovr data from last week. You can go back to last week's learning materials to download from Blackboard. 
+Then we will be using the ncovr data from last week. We must load the geodaData packge to access it: 
 
-Last week we did not treat the data as spatial and, consequently, relied on the .csv file. But notice that in the unzipped ncovr file there is also a shapefile that we can load as a spatial object into R:
 
 ```{r}
-shp_name <- "data/ncovr/NAT.shp"
-ncovr_sf <- st_read(shp_name)
+library(geodaData)
+data("ncovr")
+
 ```
 
-We can indeed represent our variable of interest using a choropleth map.
+While we did not use the spatial information last week, this was inherently in the data in the geometry column. Let's continue to explore Homicide rate for the 1990s. We can indeed represent our variable of interest using a choropleth map.
 
 ```{r}
 
-
-tm_shape(ncovr_sf) + 
+tm_shape(ncovr) + 
   tm_fill(
     "HR90",
     fill.scale = tm_scale_intervals(style = "quantile", values = "brewer.reds"),
-    fill.legend = tm_legend(title = "Homicide Rate (Quantiles)")
+    fill.legend = tm_legend(title = "Homicide Rate (Quantiles)", 
+                            position = c("right", "bottom"), 
+                            title.size = 0.8)
   ) +
   tm_borders(col_alpha = 0.1) +
-  tm_title("Homicide Rate across US Counties, 1990", size = 0.7) +
-  tm_legend(position = c("right", "bottom"), title.size = 0.8)
+  tm_title("Homicide Rate across US Counties, 1990", size = 0.7) 
 ```
 
 Do you think there is spatial patterning for homicide? 
+
+
+Note: you may be seeing a warning that says "old-style crs object detected; please recreate object with a recent sf::st_crs()". To remove it we can simply reproject our object:
+
+```{r}
+# reproject object to WGS84
+st_crs(ncovr) <- st_crs(4326)
+
+```
 
 ## Looking at the residuals and testing for spatial autocorrelation in regression
 
@@ -63,13 +72,13 @@ In order to explore the residuals we need to fit our model first. Let's look at 
 So here is the function `lm()` which we learned all about last week (or refreshed about...!). Anyway, here we model homicide rate in the 1990s (`HR90`) using all 6 variables of interest, `RD90`- Resource Deprivation/Affluence, `SOUTH` - Counties in the southern region scored 1, `DV90` divorce rate, `MA90` the median age, `PS90` - population structure, and `UE90` unemployment. Let's fit the model now: 
 
 ```{r}
-fit_1 <- lm(HR90 ~ RD90 + SOUTH + DV90 + MA90 + PS90 + UE90, data=ncovr_sf)
+fit_1 <- lm(HR90 ~ RD90 + SOUTH + DV90 + MA90 + PS90 + UE90, data=ncovr)
 ```
 
 Now that we have fitted the model we can extract the residuals. If you look at the fit_1 object in your RStudio environment or if you run the `str()` function to look inside this object you will see that this object is a list with different elements, one of which is the residuals. An element of this object then includes the residual for each of your observations (the difference between the observed value and the value predicted by your model). We can extract the residuals using the `residuals()` function and add them to our spatial data set.
 
 ```{r}
-ncovr_sf$res_fit1 <- residuals(fit_1)
+ncovr$res_fit1 <- residuals(fit_1)
 ```
 
 If you now look at the dataset you will see that there is a new variable with the residuals. In those cases where the residual is negative this is telling us that the observed value is lower than the predicted (that is, our model is *overpredicting* the level of homicide for that observation) and when the residual is positive, the observed value is higher than the predicted (that is, our model is *underpredicting* the level of homicide for that observation).
@@ -77,10 +86,10 @@ If you now look at the dataset you will see that there is a new variable with th
 We could also extract the predicted values if we wanted. We would use the `fitted()` function.
 
 ```{r}
-ncovr_sf$fitted_fit1 <- fitted(fit_1)
+ncovr$fitted_fit1 <- fitted(fit_1)
 ```
 
-Now look at the second county in the dataset. It has a homicide rate in 1990 of 15.88. This is the observed value. If we look at the new column we have created ("fitted_fit1"), our model predicts a homicide rate of 2.41. That is, knowing the level unemployment, whether the county is North or South, the level of resource deprivation, etc., we are predicting a homicide rate of 2.41. Now, this is lower than the observed value, so our model is underpredicting the level of homicide in this case. If you observed the residual you will see that it has a value of 13.46, which is simply the difference between the observed and the predicted value.
+Now look at the second county in the dataset. It has a homicide rate in 1990 of 15.88. This is the observed value. If we look at the new column we have created (`fitted_fit1`), our model predicts a homicide rate of 2.41. That is, knowing the level unemployment, whether the county is North or South, the level of resource deprivation, etc., we are predicting a homicide rate of 2.41. Now, this is lower than the observed value, so our model is underpredicting the level of homicide in this case. If you observed the residual you will see that it has a value of 13.46, which is simply the difference between the observed and the predicted value.
 
 With spatial data one useful thing to do is to look at any spatial patterning in the distribution of the residuals. Notice that the residuals are the difference between the observed values for homicide and the predicted values for homicide, so you want your residual to NOT display any spatial patterning. If, on  the  other  hand,  your  model  displays  a  patterning  in  the  areas of  the  study  region where  it predicts badly,  then  you  may have  a  problem.  This  is  telling you that your  model  is  not  a  good representation  of  the  social  phenomena  you  are  studying  across  the full  study  area:  there  is systematically more distortion in some areas than in others. 
 
@@ -89,10 +98,10 @@ We are going to produce a choropleth map for the residuals, but we will use a co
 In order to do that we will compute the mean and the standard deviation for the variable we want to plot and break the variable according to these values. The following code creates a new variable in which we will express the residuals in terms of standard deviations away from the mean. So, for each observation, we subtract the mean and divide by the standard deviation. Remember, this is exactly what the `scale` function does, which we have introduced in week 7:
 
 ```{r}
-ncovr_sf$sd_breaks <- scale(ncovr_sf$res_fit1)[,1] 
+ncovr$sd_breaks <- scale(ncovr$res_fit1)[,1] 
 # because scale is made for matrices, we just need to get the first column using [,1]
 # this is equal to (ncovr_sf$res_fit1 - mean(ncovr_sf$res_fit1)) / sd(ncovr_sf$res_fit1)
-summary(ncovr_sf$sd_breaks)
+summary(ncovr$sd_breaks)
 ```
 
 Next we use a new style, `fixed`, within the `tm_scale_fill` function. When we break the variable into classes using the `fixed` argument we need to specify the boundaries of the classes. We do this using the breaks argument. In this case we are going to ask R to create 7 classes based on standard deviations away from the mean. Remember that a value of 1 would be 1 standard deviation (s.d.) higher than the mean, and -1 would be one s.d. lower. If we assume normal distribution, then 68% of all counties should lie within the middle band from -1 to +1 s.d. (you can find a refresher of this [on Wikipedia](https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule)).
@@ -100,15 +109,21 @@ Next we use a new style, `fixed`, within the `tm_scale_fill` function. When we b
 ```{r}
 my_breaks <- c(-14,-3,-2,-1,1,2,3,14)
 
-tm_shape(ncovr_sf) + 
+tm_shape(ncovr) + 
   tm_fill(
     "sd_breaks",
-    fill.scale = tm_scale_intervals(style = "fixed", breaks = my_breaks, values = "brewer.RdBu"),
-    fill.legend = tm_legend(title = "Residuals")
+    fill.scale = tm_scale_intervals(style = "fixed", 
+                                    breaks = my_breaks, 
+                                    # set midpoint to zero
+                                    midpoint = 0,
+                                    values = "brewer.rd_bu"),
+    fill.legend = tm_legend(title = "Residuals", 
+                            position = c("right", "bottom"), 
+                            title.size = 0.8)
   ) +
   tm_borders(col_alpha = 0.1) +
-  tm_title("Residuals", size = 0.7) +
-  tm_legend(position = c("right", "bottom"), title.size = 0.8)
+  tm_title("Residuals", size = 0.7)
+
 
 ```
 
@@ -120,7 +135,7 @@ Remember from week 7 that in order to do this, we first need to create the spati
 
 ```{r}
 # We create a list of neighbours using the Queen criteria
-w <- poly2nb(ncovr_sf, row.names=ncovr_sf$FIPSNO)
+w <- poly2nb(ncovr, row.names=ncovr$FIPSNO)
 summary(w)
 ```
 
@@ -168,8 +183,17 @@ So  how  can  we  assess  whether  this  is  an  issue  in  our  data?  As with 
 Look  at  the  residual  map  we produced earlier. Do you think that the residuals look different in the South and in the North? If the pattern is not clear to you, you may want to run other forms of visualisation. 
  
 ```{r}
-ggplot(ncovr_sf, aes(x = res_fit1, colour = as.factor(SOUTH))) + 
-  geom_density() 
+
+# recode the SOUTH variable again: 
+ncovr$SOUTH_labelled <- factor(ncovr$SOUTH, 
+                               labels = c("North", "South"))
+
+ggplot(ncovr, aes(x = res_fit1, colour = SOUTH_labelled)) + 
+  geom_density() +
+  theme_bw() + 
+  labs(colour = "Region") +
+  xlab("Distribution of residuals")
+  
 ```
 
 
@@ -179,8 +203,8 @@ What do you see in this plot? And, critically, what does it mean? What is this t
 There are formal tests that one can use to further explore these issues. The paper by Bollen et al. (2001) mentions them (Chow tests). But those are beyond the scope of this course. Sufficient to say that,  as  Bollen  et  al.  (2001),  we  are  going  to  split  our  analysis  and  run  them  separately  for  the Southern and the Northern states. We have covered the `filter()` function from `dplyr` to split datasets based on values of a variable. But to split `sf` objects it is better to rely on the more generic subset function, since `filter()` doesn't accommodate well the column with the geographic information that `sf` provides.
 
 ```{r}
-ncovr_s_sf <- subset(ncovr_sf, SOUTH == 1)
-ncovr_n_sf <- subset(ncovr_sf, SOUTH == 0)
+ncovr_s <- subset(ncovr, SOUTH == 1)
+ncovr_n <- subset(ncovr, SOUTH == 0)
 ```
 
 
@@ -192,11 +216,11 @@ In order to practice their computation and interpretation, let's run two separat
 
 ```{r}
 #Create a list of neighbours using the Queen criteria
-w_n <- poly2nb(ncovr_n_sf, row.names=ncovr_n_sf$FIPSNO)
+w_n <- poly2nb(ncovr_n, row.names=ncovr_n$FIPSNO)
 wm_n <- nb2mat(w_n, style='B')
 rwm_n <- mat2listw(wm_n, style='W')
 
-fit_2 <- lm(HR90 ~ RD90 + DV90 + MA90 + PS90 +UE90, data=ncovr_n_sf)
+fit_2 <- lm(HR90 ~ RD90 + DV90 + MA90 + PS90 +UE90, data=ncovr_n)
 ```
 
 First  look  at  the  Moran's  I. 
@@ -243,7 +267,7 @@ Just to reiterate,the Lagrange Multiplier suggests this spatial lag test may not
 Maximum Likelihood (ML) estimation of the spatial lag model is carried out with the `lagsarlm()` function. The required arguments are a regression "formula", a data set and a `listw` spatial weights object. The default method uses Ord's eigenvalue decomposition of the spatial weights matrix. This function lives in the `spatialreg` package. 
 
 ```{r}
-fit_2_lag <- lagsarlm(HR90 ~ RD90 + DV90 + MA90 + PS90 + UE90, data=ncovr_n_sf, rwm_n)
+fit_2_lag <- lagsarlm(HR90 ~ RD90 + DV90 + MA90 + PS90 + UE90, data=ncovr_n, rwm_n)
 summary(fit_2_lag)
 ```
 
@@ -301,7 +325,7 @@ data.frame(sums$pzmat)
 We see that all the variables except unemployment have significant direct, indirect and total effects. You may want to have a look at how things differ when you just run a non spatial model.
 
 ```{r}
-fit_1_OLS <- lm(HR90 ~ RD90 + DV90 + MA90 + PS90 +UE90, data=ncovr_n_sf)
+fit_1_OLS <- lm(HR90 ~ RD90 + DV90 + MA90 + PS90 +UE90, data=ncovr_n)
 summary(fit_1_OLS)
 ```
 
@@ -319,11 +343,11 @@ Maximum likelihood estimation of the spatial error model is similar to the lag p
 
 ```{r}
 #Create a list of neighbours using the Queen criteria
-w_s <- poly2nb(ncovr_s_sf, row.names=ncovr_s_sf$FIPSNO)
+w_s <- poly2nb(ncovr_s, row.names=ncovr_s$FIPSNO)
 wm_s <- nb2mat(w_s, style='B')
 rwm_s <- mat2listw(wm_s, style='W')
 
-fit_3_err <- errorsarlm(HR90 ~ RD90 + DV90 + MA90 + PS90 + UE90, data=ncovr_s_sf, rwm_s)
+fit_3_err <- errorsarlm(HR90 ~ RD90 + DV90 + MA90 + PS90 + UE90, data=ncovr_s, rwm_s)
 summary(fit_3_err)
 ```
 
@@ -349,83 +373,81 @@ Decomposing these trends is an important part of what **time series** analysis i
 
 ### Activity 7: Small multiples
 
-One way that we can represent change over time in our spatial data is to create small multiples of the same map. Faceting and small multiples is a format for comparing the geographical distribution of different social phenomena. For this session we will be using the spatial object of ASB in Manchester between 2016-2017 (`manchester_asb.csv`) which you can download from Blackboard. 
+One way that we can represent change over time in our spatial data is to create small multiples of the same map. Faceting and small multiples is a format for comparing the geographical distribution of different social phenomena. 
+
+To illustrate let's look at some data from Manchester again. Here I have one years' worth of data of ASB. You can download this from Canvas. 
+
+
+
 
 ```{r}
-mcr_asb <- read_csv("data/manchester_asb.csv") %>% clean_names()
+# step1" import csv file 
+
+asb <- read.csv("data/mcr_asb.csv") %>% clean_names()
+
+#step2: count the number of ASBs in each LSOA for each month
+asb_by_lsoa <- asb %>%
+  group_by(lsoa21cd, month) %>%
+  summarise(n = n()) %>%
+  ungroup()
+
+
+# step3: import city centre ASBs
+cc_lsoas <- st_read("data/cc_lsoas.geojson") 
+
+# step4: select only the LSOAs that are in the city centre
+
+cc_asb <- asb_by_lsoa %>% filter(lsoa21cd %in% cc_lsoas$lsoa21cd)
+
+
 ```
 
-We'll also need our boundary data. Read in the city centre LSOAs geojson (also on Blackboard) `cc_lsoas.geojson`. 
 
-```{r}
-cc_lsoas <- st_read("data/cc_lsoas.geojson")
-```
-
-Create a frequency table of the number of ASB incidents by month and by LSOA, and select only the city centre LSOAs.
-
-```{r}
-asb_by_lsoa <- mcr_asb %>% 
-  group_by(lsoa_code, month) %>% 
-  count() %>% 
-  filter(lsoa_code %in% cc_lsoas$code)
-```
-
-
-Now you might notice that there should be 13 months in the data set (from `05-2016` to `05-2017`), however, the number of resulting rows is not $23\times13 = 299$ (which you might expect as there are 23 LSOAs in the city centre), but instead `r nrow(asb_by_lsoa)`. This indicates that we have some missing observations. There are months when there were no ASBs in some of our areas, but here that is just an absence of recorded data, rather than a recorded value of 0.
+Now you might notice that there should be 12 months in the data set (from `07-2018` to `06-2019`), however, the number of resulting rows is not $13\times12 = 156$ (which you might expect as there are 13 LSOAs in the city centre), but instead `r nrow(cc_asb)`. This indicates that we have some missing observations. There are months when there were no ASBs in some of our areas, but here that is just an absence of recorded data, rather than a recorded value of 0.
 
 To fix this, we can identify the LSOAs and the missing months by selecting those where we have fewer than 13 observations: 
 
 ```{r}
-asb_by_lsoa %>% group_by(lsoa_code) %>% count() %>% filter(n < 13) %>% pull(lsoa_code)
+missing_lsoas <- cc_asb %>% group_by(lsoa21cd) %>% count() %>% filter(n < 12) %>% pull(lsoa21cd)
 ```
 
-There are two such LSOAs here. Let's see which months we have data or for each. 
+There are `r length(missing_lsoas)` such LSOAs here. It's not a lot, so we could go and manually add these back, OR we can use the `complete()` function from the tidyr package to do this automatically for us.
 
-```{r}
-asb_by_lsoa %>%
-  filter(lsoa_code %in% c("E01033673", "E01033684") ) %>% 
-  group_by(lsoa_code, month) %>% count() 
-```
-
-Looks like LSOA E01033673 is missing 2016-12 and 2017-05, while LSOA E01033684 is missing 2016-06, 2016-08, 2016-09, 2016-11, 2017-01, 2017-02, 2017-03, and 2017-05. Let's create a dataframe where we have for each observation each of these missing months for the LSOAs, and an n of 0, as these months we know there were 0 stop and searches: 
-
-```{r}
-missing_months <- data.frame(lsoa_code = c("E01033673", "E01033673", "E01033684", "E01033684", "E01033684", "E01033684", "E01033684", "E01033684", "E01033684", "E01033684"), 
-                             month = c("2016-12", "2017-05", "2016-06", "2016-08", "2016-09", "2016-11", "2017-01", "2017-02", "2017-03", "2017-05"), 
-                             n = c(0,0,0,0,0,0,0,0,0,0) )
-```
-
-And bind this to our existing dataframe with `rbind()`:
-
-```{r}
-asb_by_lsoa <- rbind(asb_by_lsoa, missing_months)
-```
-
-Now we see we have the required 299 observations!
-
-We can now join this to our cc_lsoas boundary file.
-
-```{r}
-cc_lsoas_asb <- left_join(cc_lsoas, asb_by_lsoa, by = c("code" = "lsoa_code"))
-```
-
-
-
-Let's also make sure that any NAs are replaced by 0s (if you're unsure here, watch the feedback session video for week 4!)
+The `complete()` function will take implicit missing values and turn them into explicit missing values. What this means is that for each LSOA, it will ensure that we have an observation for each month, and if there is no observation, it will create one with a value of our choosing. By default, this would be an `NA` value. But here, we can  fill this `NA` value with a 0, as we know that in these months there were 0 ASBs recorded. The fuction takes the arguments of the dataframe we want to complete (`cc_asb`), the variables that we want to ensure have all combinations of values (`lsoa21cd` and `month`), and finally, using the `fill=` argument, we can specify what value we want to fill in for missing observations (here we use a list to specify that for the variable `n`, we want to fill in 0s).
 
 
 ```{r}
-cc_lsoas_asb %>% 
-  mutate(n = ifelse(is.na(n), 0, n))
+library(tidyr)
+
+# 
+cc_asb <- cc_asb %>% 
+  complete(lsoa21cd,  month, fill = list(n = 0))
+
+
 ```
+
+
+Now all that is left is to join our data table to our geometry
+
+```{r}
+
+cc_lsoas_asb <- left_join(cc_lsoas, cc_asb, by = c("lsoa21cd" = "lsoa21cd"))
+
+```
+
 
 We now have a simple features object which has in the attribute tables the number of ASB incidents (`n`) for each LSOA for each month in our data set. We can use the function `tm_facets()` from the tmap package to now try to produce the small multiples:
 
 ```{r}
-tm_shape(cc_lsoas_asb) + 
-  tm_fill("n") +
+tm_shape(cc_lsoas_asb) +
+  tm_fill(
+    "n",
+    fill.scale = tm_scale_intervals(style = "pretty"),
+    fill.legend = tm_legend(title = "Burglary counts")
+  ) +
   tm_borders() +
   tm_facets(by = "month", free.coords = FALSE)
+
 
 ```
 
@@ -453,7 +475,7 @@ But we have no day you say! Only month! How can we use `ymd()` which clearly req
 
 ```{r}
 library(lubridate)
-cc_lsoas_asb$date_month <- ymd(paste0(cc_lsoas_asb$month, "-01"))
+cc_lsoas_asb$date_month <- ym(cc_lsoas_asb$month)
 ```
 
 Now, we can create a simple static plot, the way we already know how. Let's plot the number of ASB incidents per LSOA, and save this in an object called `anim`:
@@ -466,15 +488,15 @@ anim <- ggplot() +
 Now, finally, we can animate this graph. Take the object of the static graph (anim) and add a form of transition, which will be used to animate the graph. In this case, we can use `transition_manual()`. This transition splits your data into multiple frames based on the levels in a given column, much like how faceting splits up the data in multiple panels. It then shifts between frames, with each frame representing one level of the frame variable. Frames are the unquoted name of the column holding the frame levels in the data. You can then use `current_frame` to dynamically label the graph:
 
 ```{r}
-anim + transition_manual(date_month) +
-  labs(title = "Month: {current_frame}")
+anim + transition_time(date_month) +
+  labs(title = "Month: {frame_time}")
 ```
 
 How cool is that!?
 
 You can now make animations about transition over time to impress your friends, family, future employers, and so on. What a way to end this course!
 
-## Recap
+## Summary
 
 Today we learned a lot! We finally reached the conclusion of our spatial analysis by applying spatial weights in order to account for dependence in our spatially explicit data. Specifically we explored how to do the following: 
 
@@ -483,10 +505,6 @@ Today we learned a lot! We finally reached the conclusion of our spatial analysi
 - we looked at **interpreting the outputs** from our spatial regression models, and how they differ from the non-spatial versions. 
 - finally we looked at two ways for accounting for time in our crime mapping activities, first by using **small multiples** and second through **animations**. 
 
-
-<!-- **HOMEWORK 9.3** -->
-
-<!-- *Estimate an appropriate regression model for the homicide rate for the 1970s for the Northern States. Justify and interpret the model that you have selected.* -->
 
 
 

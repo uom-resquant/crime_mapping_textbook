@@ -19,7 +19,7 @@ We will be using the following packages today:
 - `ggplot2`     
 - `dplyr`     
 - `spatstat`      
-- `raster`        
+- `terra`        
 - `leaflet`      
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
@@ -28,8 +28,11 @@ library(janitor)
 library(sf)
 library(ggplot2)
 library(dplyr)
-library(spatstat)
-library(raster)
+library(spatstat.geom)
+library(spatstat.explore)
+library(spatstat.random)
+library(spatstat.linnet)
+library(terra)
 library(leaflet)
 ```
 
@@ -48,11 +51,11 @@ You can get both the geojson file of wards and the excel file of crimes from Bla
 
 ```{r}
 #Read a geojson file with Manchester wards (remember we learned about geojson files in week 4).
-manchester_ward <- st_read("https://raw.githubusercontent.com/eonk/cm_book/main/data/wards.geojson")
+manchester_ward <- st_read("data/manchester_wards.geojson")
 
 #step1: create a new object that only has the 'fallowfield' ward
 df1 <- manchester_ward %>%
-  filter(wd16nm == "Fallowfield")
+  filter(wd22nm == "Fallowfield")
 
 #step2: change coordinate systems
 fallowfield <- st_transform(df1, 4326)
@@ -70,7 +73,7 @@ burglary <- filter(crimes, crime_type == "Burglary")
 
 #step6: transform the dataframe with crime information into a sf object
 burglary_spatial <-  st_as_sf(burglary, coords = c("longitude", "latitude"), 
-                 crs = 4326, agr = "constant")
+                 crs = 4326)
 
 #step7: select only the crimes that take place within the space defined by the Ward boundaries
 # intersection
@@ -88,25 +91,25 @@ Now we have all our data cleaned and all our files prepared. Let's see the resul
 ggplot() + 
   geom_sf(data = fallowfield) + 
   geom_sf(data = bur_fal) + 
-  theme(legend.position = "none",
-        panel.grid = element_blank(),
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        panel.background = element_blank()) 
+  theme_void() 
 ```
 
 In the point pattern analysis literature each point is often referred to as an **event** and these events can have **marks**, attributes or characteristics that are also encoded in the data. In our spatial object one of these *marks* is the type of crime (although in this case it's of little interest since we have filtered on it).
 
 ### Activity 1: Getting the data into spatstat: the problem with duplicates
 
-So let's start using spatstat.The first thing we need to do is to transform our `sf` object into a `ppp` object which is how `spatstat` likes to store its point patterns. Unfortunately, spatstat and many other packages for analysis of spatial data precede `sf`, so the transformation is a bit awkard. Also before we do that, it is important to realise that a point pattern is defined as a series of events in a given area, or window, of observation. It is therefore extremely important to precisely define this *window*. In `spatstat` the function `owin()` is used to set the observation window. However, the standard function takes the coordinates of a rectangle or of a polygon from a matrix, and therefore it may be a bit tricky to use. Luckily the package `maptools` provides a way to transform a `SpatialPolygons` into an object of class `owin`, using the function `as.owin()`. Here are the steps: 
+So let's start using spatstat. The first thing we need to do is to transform our `sf` object into a `ppp` object which is how `spatstat` likes to store its point patterns. A `ppp` object needs two ingreatiesnts: 1: the points (xy coordinates) and 2: the observation window (the polygon that defines where points could have been observed). 
 
-First we transform the CRS of our 'Falllowfield' polygon into projected coordinates (British National Grid) as opposed to geographic coordinates (WGS84) :
+Because point pattern methods rely on distances, we do this in a projected CRS in metres (British National Grid, EPSG:27700).
 
 ```{r}
+
 fallowfield_proj <- st_transform(fallowfield, 27700)
+bur_fal_proj     <- st_transform(bur_fal, 27700)
+
 ```
+
+Now, since a point pattern is defined as a series of events in a given area, or window, of observation, it is extremely important to precisely define this *window*. In `spatstat` the function `owin()` is used to set the observation window. We can do this using the function `as.owin()`. Here are the steps: 
 
 Then we use the as.owin function to define the window. 
 
@@ -121,20 +124,21 @@ class(window)
 window
 ```
 
-Now that we have created the window as an `owin` object let's get the points. First we will extract the coordinates from our sf point data into a matrix:
+Now that we have created the window as an `owin` object let's get the points. First we will extract the coordinates from our `sf` point data into a matrix:
 
 ```{r}
-#we must transform these too to match our window in BNG
-bur_fal <- st_transform(bur_fal, 27700) 
-sf_bur_fal_coords <- matrix(unlist(bur_fal$geometry), ncol = 2, byrow = T)
+
+xy <- st_coordinates(bur_fal_proj)
+
 ```
 
 Then we use the `ppp` function to create the ppp (point pattern) object using the information from our matrix and the window that we created.
 
 ```{r}
-bur_ppp <- ppp(x = sf_bur_fal_coords[,1], y = sf_bur_fal_coords[,2],
+bur_ppp <- ppp(x = xy[,"X"], y = xy[,"Y"],
                    window = window, check = T)
 plot(bur_ppp)
+
 ```
 
 Notice the warning message about duplicates. In spatial point pattern analysis an issue of significance is the presence of duplicates. The statistical methodology used for spatial point pattern processes is based largely on the assumption that processes are *simple*, that is, that the points cannot be coincident. That assumption may be unreasonable in many contexts (for example, the literature on repeat victimisation indeed suggests that we should expect the same households to be at a higher risk of being hit again). Even so the point (no pun intended) is that *"when the data has coincidence points, some statistical procedures will be severely affected. So it is always strongly advisable to check for duplicate points and to decide on a strategy for dealing with them if they are present"* (Baddeley et al., 2016: 60).
@@ -163,12 +167,7 @@ That's quite something. `r sum(multiplicity(bur_ppp) > 1)` points here share coo
 ggplot() + 
   geom_sf(data = fallowfield) + 
   geom_sf(data = bur_fal, alpha = 0.4) + 
-  theme(legend.position = "none",
-        panel.grid = element_blank(),
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        panel.background = element_blank()) 
+  theme_void() 
 ```
 
 In the case of crime, as we have hinted some of this may be linked to the nature of crime itself, *repeat victimisation*. However, this pattern of duplication is fairly obvious across all crime categories in the police.uk website.
@@ -216,7 +215,7 @@ In classical literature, the *homogeneous Poisson process* (CSR) is usually take
 quadrat.test(jitter_bur, nx = 3, ny = 2)
 ```
 
-Observing the results we see that the p value is well below convential standards for rejection of the null hypothesis ($\alpha = 0.05$). Observing our data of burglary in Fallowfield would be extremely rare if the null hypothesis was true. We can then conclude that the burglary data is not randomly distributed in the observed space. But no cop nor criminologist would really question this. They would rarely be surprised by your findings! We do know that crime is not randomly distributed in space. 
+Observing the results we see that the p value is well below conventional standards for rejection of the null hypothesis ($\alpha = 0.05$). Observing our data of burglary in Fallowfield would be extremely rare if the null hypothesis was true. We can then conclude that the burglary data is not randomly distributed in the observed space. But no cop nor criminologist would really question this. They would rarely be surprised by your findings! We do know that crime is not randomly distributed in space. 
 
 ## Density estimates
 
@@ -237,7 +236,7 @@ The values that we attribute to the cells in crime mapping will typically refer 
 
 ### Activity 3: Density maps
 
-Let's produce one of this density maps:
+Let's produce one of these density maps:
 
 ```{r}
 ds <- density(jitter_bur)
@@ -249,7 +248,7 @@ The density function is estimating a kernel density estimate. Density is nothing
 
 To perform this analysis in R we need to define the **bandwidth** of the density estimation, which basically determines the area of influence of the estimation. There is no general rule to determine the correct bandwidth; generally speaking if the bandwidth is too small the estimate is too noisy, while if bandwidth is too high the estimate may miss crucial elements of the point pattern due to oversmoothing (Scott, 2009). 
 
-The key argument to pass to the density method for point pattern objects is `sigma=`, which determines the bandwidth of the kernel. In spatstat the functions `bw.diggle()`, `bw.ppl()`, and `bw.scott()` can be used to estimate the bandwidth according to difference methods. The helpfiles recommend the use of the first two. These functions run algorithms that aim to select an appropriate bandwith.
+The key argument to pass to the density method for point pattern objects is `sigma=`, which determines the bandwidth of the kernel. In spatstat the functions `bw.diggle()`, `bw.ppl()`, and `bw.scott()` can be used to estimate the bandwidth according to different methods. The helpfiles recommend the use of the first two. These functions run algorithms that aim to select an appropriate bandwith.
 
 ```{r}
 bw.diggle(jitter_bur)
@@ -271,7 +270,7 @@ plot(density.ppp(jitter_bur, sigma = bw.scott(jitter_bur)[1],edge=T),
      main=paste("scott 2"))
 ```
 
-Baddeley et (2016) suggest the use of the `bw.ppl()` algorithm because in their experience it tends to produce the more appropriate values when the pattern consists predominantly of tight clusters. But they also insist that if your purpose it to detect a single tight cluster in the midst of random noise then the `bw.diggle()` method seems to work best.
+Baddeley et (2016) suggest the use of the `bw.ppl()` algorithm because in their experience it tends to produce the more appropriate values when the pattern consists predominantly of tight clusters. But they also insist that if your purpose is to detect a single tight cluster in the midst of random noise then the `bw.diggle()` method seems to work best.
 
 Apart from selecting the bandwidth we also need to specify the particular kernel we will use. In density estimation there are different types of kernel (as illustrated below):
 
@@ -309,9 +308,9 @@ There are also general considerations to keep in mind. Hot spots of crime are a 
 Often it is convenient to use a basemap to provide context. In order to do that we first need to turn the image object generated by the `spatstat` package into a raster object, a more generic format for raster image used in R. Remember rasters from the first week? Now we finally get to use them a bit!
 
 ```{r, message=FALSE}
-library(raster)
+library(terra)
 dmap1 <- density.ppp(jitter_bur, sigma = bw.ppl(jitter_bur),edge=T)
-r1 <- raster(dmap1)
+r1 <- rast(dmap1)
 #remove very low density values
 r1[r1 < 0.0001 ] <- NA
 class(r1)
@@ -319,11 +318,11 @@ class(r1)
 
 Now that we have the raster we can add it to a basemap. 
 
-Two-dimensional `RasterLayer` objects (from the `raster` package) can be turned into images and added to `Leaflet` maps using the `addRasterImage()` function.
+Two-dimensional `SpatRaster` objects (from the `terra` package) can be turned into images and added to `Leaflet` maps using the `addRasterImage()` function.
 
-The `addRasterImage()` function works by projecting the `RasterLayer` object to EPSG:3857 and encoding each cell to an RGBA color, to produce a PNG image. That image is then embedded in the map widget.
+The `addRasterImage()` function works by projecting the `SpatRaster` object to EPSG:3857 and encoding each cell to an RGBA color, to produce a PNG image. That image is then embedded in the map widget.
 
-It’s important that the `RasterLayer` object is tagged with a proper coordinate reference system. Many raster files contain this information, but some do not. Here is how you’d tag a raster layer object “r1” which contains WGS84 data:
+It’s important that the `SpatRaster` object is tagged with a proper coordinate reference system. Many raster files contain this information, but some do not. Here is how you’d tag a raster layer object “r1” which contains WGS84 data:
 
 ```{r, message=FALSE}
 library(leaflet)
@@ -331,7 +330,7 @@ library(leaflet)
 #make sure we have right CRS, which in this case is British National Grid
 epsg27700 <- "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs"
 
-crs(r1) <- sp::CRS(epsg27700)
+crs(r1) <- epsg27700
 
 #we also create a colour palet
 pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values(r1),
@@ -346,12 +345,6 @@ leaflet() %>%
 ```
 
 And there you have it. Perhaps those familiar with Fallowfield have some guesses as to what may be going on there?
-
-<!-- ### Homework 1 -->
-<!-- *Ok, so see if you can do something like what we have done today, but for violent crime in the city centre. Produce the density estimates and then plot the density plot. In addition add a layer of points with the licenced premises we looked at last week.* -->
-
-<!-- ### Homework 2 -->
-<!-- *Produce a kernel density estimate for burglary across the whole of the city. Where is burglary more concentrated?* -->
 
 ## Spatial point patterns along networks
 
@@ -379,11 +372,11 @@ In `spatstat` a point pattern on a linear network is represented by an object of
 
 ```{r}
 data("chicago")
-plot(chicago)
 summary(chicago)
 ```
 
 An `lpp` object contains the linear network information, the spatial coordinates of the data points, and any number of columns of *marks* (in this case the mark is telling us the type of crime we are dealing with). It also contains the local coordinates `seg` and `tp` for the data points. The local coordinate `seg` is an integer identifying the particular street segment the data point is located in. A segment is each of the sections of a street between two vertices (marking the intersection with another segment). The local coordinate `tp` is a real number between 0 and 1 indicating the position of the point within the segement: `tp=0` corresponds to the first endpoint and `tp=1` correspond to the second endpoint.
+
 
 The visual inspection of the map suggest that the intensity of crime along the network is not spatially uniform. Crime seems to be concentrated in particular segments. Like we did before we can estimate the density of data points along the networks using Kernel estimation (with the `density.lpp()` function), only now we only look at the street segments (rather than areas of the space that are outside the segments). The authors of the package are planning to introduce methods for automatic bandwidth selection but for now this is not possible, so we have to select a bandwidth. We could for example select 60 feet.
 
@@ -418,7 +411,7 @@ While sometimes there may be issues with linking points to routes due to problem
 
 Now we have some ways of identifying hot spots under our belts!
 
-## Recap
+## Summary
 
 Today we learned about spatial point patterns. Specifically we explored how to do the following: 
 - we looked at dividing our polygon into **quadrants**, and counting the number of crimes in each one

@@ -142,14 +142,7 @@ crimes <- read_csv(file.choose())
 Or, if you know the path to your file, you can code it in there, within quotation marks:
 
 ```{r, eval=TRUE}
-crimes <- read_csv("data/2019-06-greater-manchester-street.csv")
-```
-
-Or, you can download it from the a website where we keep the data with the following code:
-```{r, eval=FALSE}
-# save URL into an object
-urlfile <- "https://raw.githubusercontent.com/eonk/cm_book/main/data/2019-06-greater-manchester-street.csv"
-crimes <- read_csv(url(urlfile))
+crimes <- read_csv("data/crimes_w_lsoa_codes_attached.csv")
 ```
 
 You might notice that the object `crimes` has appeared in your work environment window. It will tell you how many observations (rows - and incidentally the number of recorded crimes in June 2019 within the GMP jurisdiction) and how many variables (columns) your data has.
@@ -205,7 +198,7 @@ inlinecode2 <- print(crimes$latitude[1])
 inlinecode3 <- print(crimes$location[1])
 inlinecode4 <- print(crimes$location[nrow(crimes)])
 inlinecode5 <- print(gsub("On or near ","",crimes$location[nrow(crimes)]))
-inlinecode6 <- print(crimes$lsoa_name[1])
+inlinecode6 <- print(crimes$lsoa21nm[1])
 ```
 
 
@@ -235,13 +228,13 @@ What more? You may also have seen the column `lsao_name` seems to have some spat
 head(crimes, n = 1)
 ```
 
-You see the value for LSOA name is **`r inlinecode6``r print(crimes$lsoa_name[1])`** - Bolton we know is a Borough of Greater Manchester, but what is the 001 for ?
+You see the value for LSOA name is **`r inlinecode6``r print(crimes$lsoa21nm[1])`** - Bolton we know is a Borough of Greater Manchester, but what is the 001 for ?
 
 Well it denotes a sparticular geographical sub-unit within Bolton called a **Lower Layer Super Output Area**. This is a unit of [UK Census Geography](https://www.ons.gov.uk/methodology/geography/ukgeographies/censusgeography). The basic unit for Census Geography is an 'Outout area' - this is the resolution at which we can access data from the UK Census. We will be making use of census data later in the course. The Ourput Area (OA) is therefore the smallest unit we could use. Normally, in this module, we will be using a slightly larger version - the Lower Super Output Area (LSOA). 
 
 There are now 181,408 OAs, 34,753 lower layer super output areas (LSOA) and 7,201 middle layer super output areas (MSOA) in England and Wales. The neat thing about these Census geographies is the idea is that they don't change (unlike administrative boundaries such as wards) and were created with statistical analysis in mind. The less neat thing is that although we use them to operationalise the concept of neighbourhood a lot, they may not bear much resemblance to what residents might think of as their neighbourhood. Think for a minute - do you know what LSOA you live in? Most likely you answered no. If you answered yes, I am impressed and you get geography nerd cred. Well done. 
 
-Anyway back to our crime data. You see we have two columns that reference LSOAs, `lsoa_name` and `lsoa_code`. We can use these to *link* our crime data to a *shapefile* of a *polygon* which contains the geometries needed to put the crime data on the map. 
+Anyway back to our crime data. You see we have two columns that reference LSOAs, `lsoa21nm` and `lsoa21cd`. We can use these to *link* our crime data to a *shapefile* of a *polygon* which contains the geometries needed to put the crime data on the map. 
 
 ## Putting crime on the map - simple features
 
@@ -296,6 +289,9 @@ class(crimes_sf)
 
 You might also notice something else that is different between crimes and crimes_sf. Have a look at the dimension (hint look in your 'Environment' tab). Do you see? Discuss what you think is different with your neighour or one of the teaching team. 
 
+
+> One thing to note is that if you have missing values in your coordinates, you have to deal with these before converting your dataframe into an sf object. You can remove these, look up the coordinates and add them manually (if known), or, if you would like to include these rows in your dataframe (but be aware that you won't be able to map them) you can set the parameter `na.fail` to `FALSE` in the `st_as_sf()` function. This will allow you to keep these rows in your dataframe, but they won't be have any coordinate values, and therefore won't be mapped.
+
 #### Activity 4: Mapping our points
 
 Now that we have this sf object, how can we map it? I mentioned before about the graphical package `ggplot2`. We can use this, and its syntax, in order to map spatial data using the `geom_sf()` geometry. 
@@ -316,73 +312,187 @@ Let's take it one step at the time.
 
 Essentially the philosophy behind this is that all graphics are made up of layers. The package `ggplot2` is based on the grammar of graphics, the idea that you can build every graph from the same few components: a data set, a set of geoms—visual marks that represent data points, and a coordinate system.
 
-Take this example (all taken from *Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.*)
 
-You have a table such as: 
 
-![](img/table.png)
+Let's take it one step at time. Essentially, the philosophy behind this is that all graphics are made up of layers. You can build every graph from the same few components: a dataset, a set of geoms visual marks that represent data points, and a coordinate system. Take this example from our crimes dataframe. You have a table such as: 
+
+```{r, echo = FALSE, message = FALSE, warning=FALSE}
+library(dplyr)
+
+df <- crimes %>% 
+  filter(crime_type %in% c("Robbery", "Shoplifting", "Theft from the person")) %>% 
+  group_by(crime_type) %>% 
+  count()
+  
+print(df)
+```
 
 You then want to plot this. To do so, you want to create a plot that combines the following layers: 
 
-![](img/layers.png)
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+# create three separate plots to illustrate the layers
+p1 <- ggplot(df, aes(x = crime_type, y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_void()
+
+p2 <- ggplot(df, aes(x = gsub(" from the person", "",crime_type), y = n)) + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 15, hjust = 1)) + 
+  xlab("Crime type") + 
+  ylab("Number of crimes")
+
+p3 <- ggplot(df, aes(x = crime_type, y = n)) + 
+  theme_void() + 
+  labs(title = "Freq. of crime types") + 
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
+gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
+
+
+```
 
 This will result in a final plot: 
 
-![](img/combined.png)
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-Taking our crime data as an example, we would build up our plot as follows: 
+ggplot(df, aes(x = gsub(" from the person", "",crime_type), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 15, hjust = 1), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1)) + 
+  labs(title = "Frequency of crime types") + 
+  xlab("Crime type") + 
+  ylab("Number of crimes")
+
+```
+
+
+Taking our crime data as an example, we would build up our plot as follows. First let's create a small illustrative dataset of only the crimes of "Robbery", "Shoplifting", and "Theft from the person". 
+
+```{r, message = FALSE, warning=FALSE}
+
+library(dplyr)
+
+df <- crimes %>% 
+  filter(crime_type %in% c("Robbery","Shoplifting", "Theft from the person")) %>% 
+  group_by(crime_type) %>% 
+  count() 
+  
+df
+```
 
 Load ggplot2 package
 
-```{r}
+```{r, eval=FALSE}
 library(ggplot2)
 ```
 
-Data: 
+
+Now let us add the layers to our ggplot object. First, the data layer: 
+
 ```{r}
-ggplot(crimes, aes(x = crime_type))
+
+ggplot(df, aes(x = crime_type, y = n))
+
 ```
 
-Geometry: 
+
+Then add the geometry (in this case, `geom_col()`): 
+
+
 ```{r}
-ggplot(crimes, aes(x = crime_type)) + 
-  geom_bar()
+
+ggplot(df, aes(x = crime_type, y = n)) + 
+  geom_col()
 ```
 
-Aesthetics:
+Then our annotations: 
+
 ```{r}
-ggplot(crimes, aes(x = crime_type, fill = last_outcome_category)) + 
-  geom_bar()
+
+ggplot(df, aes(x = crime_type, y = n)) + 
+  geom_col() + 
+  labs(title = "Frequency of crime types") + 
+  xlab("Crime type") + 
+  ylab("Number of crimes")
+  
 ```
 
-And then you could add any facets (for example if we had more than one month of data) or any statistics (for example error bars) with facet and stats layers. One more thing I do want to show is tidying up your chart, you can add theme and clean up your labels and titles and colour scheme. 
+We can also specify our themes, by using a custom theme such as `theme_minimal()`, and by adding our own specifications within an additional `theme()` function: 
 
 ```{r}
-ggplot(crimes, aes(x = crime_type, fill = last_outcome_category)) + 
-  geom_bar() + 
-  coord_flip() + 
+
+ggplot(df, aes(x = crime_type, y = n)) + 
+  geom_col() + 
+  labs(title = "Frequency of crime types") + 
+  xlab("Crime type") + 
+  ylab("Number of crimes") + 
   theme_minimal() + 
-  xlab("Crime Type") + 
-  ylab("Number of cases") + 
-  scale_fill_brewer(type = "qual", palette = 3, name = "Outcome")
+  theme(axis.text.x = element_text(angle = 15, hjust = 1), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1))
+  
 ```
 
-This is not the greatest graph you'll ever see, but it illustrates the process. Do read up on ggplot2 for example in Hadley Wickham's book R4DS [chapter on data visualisation](https://r4ds.had.co.nz/data-visualisation.html). 
+We can add further specifications within the `aes()` (aesthetics) function, where we add additional layers from our data, to represent even more information in our charts, for example the outcomes for each crime. 
+
+```{r}
+
+# create new dataframe (df) including last_outcome_category variable
+
+df <- crimes %>% 
+  filter(crime_type %in% c("Robbery", "Shoplifting", "Theft from the person"), 
+         last_outcome_category %in% c("Offender given penalty notice", "Local resolution", "Offender given a caution", "Unable to prosecute suspect")) %>% 
+  group_by(crime_type, last_outcome_category) %>% 
+  count() 
+
+# plot including new variable with fill= parameter in aes() function
+
+ggplot(df, aes(x = crime_type, y = n, fill = last_outcome_category)) + 
+  geom_col() + 
+  labs(title = "Frequency of crime types") + 
+  xlab("Crime type") + 
+  ylab("Number of crimes") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 15, hjust = 1), 
+        panel.border = element_rect(colour = "black", fill=NA,  size=1))
+```
+
+
+We can be explicit about the colours we want to use with the function `scale_fill_brewer()`, which we can also use to rename our legend. Don't worry too much at this point about where the palette comes from; later in the module we will discuss colour in more detail. 
+
+```{r}
+
+ggplot(df, aes(x = crime_type,  y = n, fill = last_outcome_category)) + 
+  geom_col() + 
+  labs(title = "Frequency of crime types") + 
+  xlab("Crime type") + 
+  ylab("Number of crimes") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 15, hjust = 1), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1)) + 
+  scale_fill_brewer(type = "qual", palette = 3, name = "Outcome")
+
+```
+
+There are many more options. While this here is not the greatest graph you'll ever see, it illustrates the process of building up your graphics the ggplot way. Do read up on `ggplot2` for example in @Wickham_2017. In later chapters, we will talk more about visualisation, colour choice, and more!
 
 So how can we use this for spatial data? We can use the `geom_sf()` function to do so. 
 
 #### Activity 5: Mapping our points
 
-Using geom_sf is slightly different to other geometries, for example how we used `geom_bar()` above. First we initiate the plot with the `ggplot()` function but don't include the data in there. Instead, it is in the geometry where we add the data. And second we don't need to specify the mapping of x and y. Since this is in the geometry column of our spatial object. Like so:
+Using `geom_sf` is slightly different to other geometries, for example how we used `geom_bar()` above. First we initiate the plot with the `ggplot()` function but don't include the data in there. Instead, it is in the geometry where we add the data. And second we don't need to specify the mapping of x and y. Since this is in the geometry column of our spatial object. Like so:
 
 ```{r}
 ggplot() + 
-  geom_sf(data = crimes_sf)
+  geom_sf(data = crimes_sf) + 
+  theme_minimal() 
+  
 ```
 
 And here we have a map of each point in our data set, each recorded crime in June 2019 in Greater Manchester. 
 
-Would you call this a map though? While it is presenting spatial data, there is not a lot of meaning being communicated. Point maps generally can be messy and their uses are specific to certain situations and cases, usually when you have fewer points, but here, these points are especially devoid of any meaning, as they are floating in a graph grid. SO let's give it a basemap. 
+Would you call this a map though? While it is presenting spatial data, there is not a lot of meaning being communicated. Point maps generally can be messy and their uses are specific to certain situations and cases, usually when you have fewer points, but here, these points are especially devoid of any meaning, as they are floating in a graph grid. So let's give it a basemap. 
 
 We can do this by adding a layer to our graph object. Specifically we will use the `annotation_map_tile()` from the `ggspatial` package. This provides us with a static Open Street Map layer behind our data, giving it (some) more context. 
 
@@ -421,7 +531,7 @@ Anyway let's leave out points for now, and move on to how we might map our lines
 
 ### Mapping data by joining it to sf objects
 
-What about our other two columnds, location, and LSOAs? Well to put these on the map, we need a geometry representation of them. We will learn in this section where you may find these, how to download them, turn them into sf objects, and how to link your data to them to be able to map them. 
+What about our other two columns, location, and LSOAs? Well to put these on the map, we need a geometry representation of them. We will learn in this section where you may find these, how to download them, turn them into sf objects, and how to link your data to them to be able to map them. 
 
 #### Activity 6: Finding shapefiles
 
@@ -439,7 +549,7 @@ So to get some boundary data, you can use the UK Data Service website. There is 
 
 When you get to the link, you will see on the top there is some notification to help you with the boundary data selector. If in the future you are looking for boundary data and you are feeling unsure at any point, feel free to click on that note "**How to use Boundary Data Selector**" which will help to guide you. 
 
-For now, let's focus on the selector options. Here you can choose the country you want to select shapefiles for. We select "England". You can also choose the type of geography we want to use. Here we select "Statistical Building Block", as discussed above. And finally you can select when you want it for. If you are working with historical data, it makes sense to find boundaries that match the timescale for your data. Here we will be using data from pre-2021, so we will need the historic LSOAs (2011 to 2020). 
+For now, let's focus on the selector options. Here you can choose the country you want to select shapefiles for. We select "England". You can also choose the type of geography we want to use. Here we select "Statistical Building Block", as discussed above. And finally you can select when you want it for.  
 
 ***
 
@@ -455,23 +565,13 @@ Once you have selected these options, click on the "Find" button. That will popu
 
 Here you can select the boundaries we want. As discussed, we want the census lower super output areas. But again, your future choices here will depend on what data you want to be mapping. 
 
-Once you've made your choice, click on "List Areas". This will now populate the box below. We are here concerned with Manchester. However you can select more than one if you want boundaries for more than one area as well. Just hold down "ctrl" to select multiple areas individually, or the shift key to select everything in between. 
+Once you've made your choice, click on "List Areas". This will now populate the box below. You will see it lists "England", click on this and then the button "Expand Selection". Next we choose the North West, and then finally select Manchester: 
 
 ***
 
 ![](img/boundary_selector_3.png) 
 
 ***
-
-Once you've made your decision click on the "Extract Boundary Data" button. You will see the following message: 
-
-***
-
-![](img/wait.png)
-
-***
-
-You can bookmark, or just stay on the page and wait. How long you have to wait will depend on how much data you have requested to download. 
 
 When your data is read, you will see the following message: 
 
@@ -506,12 +606,12 @@ You should end up with a folder called "BoundaryData". Have a look at its conten
 
 So you can see immediately that there are some documentations around the usage of this shapefile, in the readme and the terms and conditions. Have a look at these as they will contain information about how you can use this map. For example, all your maps will have to mention where you got all the data from. So since you got this boundary data from the UKDS, you will have to note the following: 
 
-"Contains National Statistics data © Crown copyright and database right [year]
-    Contains OS data © Crown copyright [and database right] (year)"
+> "Source: Office for National Statistics licensed under the Open Government Licence v.3.0
+    Contains OS data © Crown copyright and database right [year]"
 
 You can read more about this in the terms and conditions document. 
 
-But then you will also notice that there are 4 files with the same name "england_oac_2011". **It is important that you keep all these files in the same location as each other!** They all contain different bits of information about your shapefile (and they are all needed): 
+But then you will also notice that there are 4 files with the same name "england_lsoa_2021". **It is important that you keep all these files in the same location as each other!** They all contain different bits of information about your shapefile (and they are all needed): 
 
 - .shp — shape format; the feature geometry itself - this is what you see on the map
 - .shx — shape index format; a positional index of the feature geometry to allow seeking forwards and backwards quickly
@@ -521,13 +621,6 @@ But then you will also notice that there are 4 files with the same name "england
 Sometimes there might be more files associated with your shapefile as well, but we will not cover them here. So unlike when you work with spreadsheets and data in tabular form, which typically is just all included in one file; when you work with spatial data, you have to live with the required information living in separate files that need to be stored together. So, being tidy and organised is even more important when you carry out projects that involve spatial data. Please do remember the suggestions we provided last week as to how to organise your RStudio project directories.
 
 #### Activity 7: Reading shapefiles into R
-
-<!-- ### **HOMEWORK 2** -->
-
-<!-- Read Section 2.1 of the Geocomputation book linked above. Answer the following questions: -->
-<!-- 1. What are some strengths/advantages of the sf package? -->
-<!-- 2. What code do you need to transform a sf object into a sp object. -->
-<!-- 3  What is simply a sf object? -->
  
 To read in your data, you will need to know the path to where you have saved it. Ideally this will be in your data folder in your project directory. 
 
@@ -536,7 +629,7 @@ Let's create an object and assign it our shapefile's name:
 ```{r}
 # Remember to use the appropriate pathfile in your case 
 # alt, manchester_lsoa <- st_read(file.choose())
-shp_name <- "data/BoundaryData/england_lsoa_2011.shp"
+shp_name <- "data/BoundaryData/england_lsoa_2021.shp"
 ```
 
 Make sure that this is saved in your working directory, and you have set your working directory. 
@@ -613,10 +706,10 @@ crime_per_LSOA <- summarise(grouped_crimes, count = n())
 As you can see we can do what we wanted, create a new dataframe with the required info, but if we do this we are creating many objects that we don't need, one at each step. Instead there is a more efficient way of doing this, without so many intermediate steps clogging up our environment with unnecessary objects. That's where the piping operator comes handy. The piping operator is written like `%>%` and it can be read as "and then". Look at the code below:
 
 ```{r}
-#First we say create a new object called crime_per_lsoa, and then select only the LSOA.code column to exist in this object, and then group this object by the LSOA.code, and then count the number of cases within each category, this is what I want in the new object.
+#First we say create a new object called crime_per_lsoa, and then select only the lsoa_code column to exist in this object, and then group this object by the LSOA.code, and then count the number of cases within each category, this is what I want in the new object.
 
 crimes_per_lsoa <- crimes %>%
-  group_by(lsoa_code) %>%
+  group_by(lsoa21cd) %>%
   summarise(count=n())
 ```
 
@@ -630,7 +723,7 @@ Those of you playing close attention might note that there are still more observ
 
 Our next task is to link our crimes data to our sf spatial object to help us map this. Notice anything similar between the data from the shapefile and the frequency table data we just created? Do they share a column? 
 
-Yes! You might notice that the `lsoa_code` field in the crimes data matches the values in the `code` field in the spatial data. In theory we could join these two data tables.
+Yes! You might notice that the `lsoa21cd` field in the crimes data matches the values in the `code` field in the spatial data. In theory we could join these two data tables.
 
 So how do we do this? Well what you can do is to link one data set with another.  Data linking is used to bring together information from different sources in order to create a new, richer dataset. This involves identifying and combining information from corresponding records on each of the different source datasets. The records in the resulting linked dataset contain some data from each of the source datasets. Most linking techniques combine records from different datasets if they refer to the same entity (an entity may be a person, organisation, household or even a geographic region.) 
 
@@ -644,31 +737,51 @@ So we've already identified that both our crimes data, and the spatial data cont
 
 ![](img/fn2187.png)
 
-**You need a unique identifier to be present** for each row in all the data sets that you wish to join. This is how R knows what values belong to what row! What you are doing is matching each value from one table to the next, using this unique identified column, that exists in both tables. For example, let's say we have two data sets from some people in Hawkins, Indiana. In one data set we collected information about their age. In another one, we collected information about their hair colour. If we collected some information that is unique to each observation, and this is the *same* in both sets of data, for example their names, then we can link them up, based on this information.  Something like this: 
+**You need a unique identifier to be present** for each row in all the data sets that you wish to join. This is how R knows what values belong to what row! What you are doing is matching each value from one table to the next, using this unique identified column, that exists in both tables. For example, let's say we have two data sets from some people in Hawkins, Indiana. In one data set we collected information about their age. In another one, we collected information about their hair colour. If we collected some information that is unique to each observation, and this is the *same* in both sets of data, for example their names, then we can link them up, based on this information.   Something like this: 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(grid)
+library(gridExtra)
+
+t1 <- data.frame(name = c("Barb", "Steve", "Mike"), 
+                  age = c(16, 16, 13))
+
+t2 <- data.frame(name = c("Barb", "Steve", "Mike"), 
+                  hair_colour = c("Red", "Brown", "Black"))
 
 
-![](img/merge_logic_1.png)
+grid.arrange(tableGrob(t1), tableGrob(t2), nrow = 1)
 
-
+```
 
 And by doing so, we produce a final table that contains all values, lined up *correctly* for each individual observation, like this: 
 
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
-![](img/merge_logic_2.png)
+t3 <- left_join(t1, t2)
 
-This is all we are doing, when merging tables, is we are making use that we line up the correct value for all the variables, for all our observations. 
+grid.arrange(tableGrob(t3))
 
-Why are we using *left* join though? There is a [whole family of join functions as part of dplyr](http://stat545.com/bit001_dplyr-cheatsheet.html) which join data sets. There is also a right_join, and an inner_join and an outer_join and a full_join. But here we use left join, because that way we keep all the rows in x (the left-hand side dataframe), and join to it all the matched columns in y (the right-hand side dataframe). 
+```
+
+This is all we are doing, when merging tables: joining the two data sets using a common column. Why are we using *left* join though? There is a whole family of join functions as part of dplyr which join datasets. There is also a `right_join()`, and an `inner_join()` and an `outer_join()` and a `full_join()`. But here we use `left_join()`, because that way we keep all the rows in $x$ (the left-hand side dataframe), and join to it all the matched columns in $y$ (the right-hand side dataframe). 
+
 
 So let's join the crimes data to the spatial data, using left_join():
 
 We have to tell left_join what are the dataframes we want to join, as well as the names of the columns that contain the matching values in each one. This is "code" in the manchester_lsoa dataframe and "lsoa_code" in the crimes_per_lsoa dataframe. Like so: 
 
 ```{r}
-manchester_lsoa <- left_join(manchester_lsoa, crimes_per_lsoa, by = c("code"="lsoa_code"))
+manchester_lsoa <- left_join(manchester_lsoa, crimes_per_lsoa, by = c("lsoa21cd"="lsoa21cd"))
 ```
 
-Now if you have a look at the data again, you will see that the column of number of crimes (n) has been added on. 
+Now if you have a look at the data again, you will see that the column of number of crimes (`count`) has been added on. You may not want to have to go through this process all the time that you want to work with this data. One thing you could do is to save the "manchester_lsoa" object as a physical file in your machine. You can use the `st_write()` function from the `sf` package to do this. If we want to write into a shapefile format, we would do as shown below. Make sure you save this file, for we will come back to it in subsequent weeks.
+
+```{r, eval=FALSE}
+st_write(manchester_lsoa, "data/BoundaryData/manchester_crime_lsoa.shp")
+```
+
+*Note: if you get an error which says the layer already exists, this means there is already a file with this name in that location. You can add the parameter `append = FALSE` to overwrite this file, or give it a slightly different name.* 
 
 #### Activity 10: Mapping our data at polygon level
 
@@ -681,29 +794,32 @@ ggplot() +
 geom_sf(data = manchester_lsoa)
 ```
 
-Well now, since we have the column (variable) for number of crimes here, we can use that to share the polygons based on how many crimes there are in each LSOA. We can do this by specifying the `fill=` parameter of the `geom_sf` function. 
+Well now, since we have the column (variable) for number of crimes here, we can use that to share the polygons based on how many crimes there are in each LSOA. We can do this by specifying the `fill=` parameter of the `geom_sf()` function. 
 
 ```{r}
+
 ggplot() + 
 geom_sf(data = manchester_lsoa, aes(fill = count))
+
 ```
 
-We can add a basemap, and adjust the colour scheme, and even the opacity to see under our shape files. 
+Just like we did with the ggplot bar charts we created earlier, we can adjust the opacity of our thematic map, with the `alpha =` parameter, add a basemap, with the function `annotation_map_tile()` and adjust the colour scheme, with the `scale_fill_gradient2()` function.  
 
-```{r}
+```{r, message=FALSE}
+
 ggplot() + 
   annotation_map_tile() +  # add basemap
-geom_sf(data = manchester_lsoa, aes(fill = count), alpha = 0.7) + # alpha sets the opacity
-  scale_fill_gradient2(name ="Number of crimes") #use scale_fill_gradient2() for a different palette and name the variable on the legend
+geom_sf(data = manchester_lsoa, 
+        aes(fill = count), 
+        alpha = 0.7) + # alpha sets the opacity
+  #use scale_fill_gradient2() for a different palette 
+  # and name the variable on the legend
+  scale_fill_gradient2(name ="Number of crimes") 
+
 ```
 
+In subsequent weeks we will play around with other packages in R that you can use to produce this kind of maps. Gradually we will discuss the kind of choices you can make in order to select the adequate type of representation for the type of spatial data and question you have, and the aesthethic choices that are adequate depending on the purposes and medium in which you will publish your map. But for now, we can rejoice: here is our very first crime map of the course!
 
-<!-- And we can even add some interactivity! -->
-
-<!-- ```{r} -->
-<!-- tmap_mode("view") -->
-<!-- tmap_last() -->
-<!-- ``` -->
 
 ## Summary
 
