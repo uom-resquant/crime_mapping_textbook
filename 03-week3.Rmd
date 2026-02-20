@@ -31,7 +31,7 @@ crimes <- read_csv("data/2019-06-greater-manchester-street.csv")
 
 ```{r, eval=FALSE}
 #The following assumes you have a subdirectory called BoundaryData in your data folder, if not then you will need to change to the 'pathfile' where you store your LSOA shapefile. 
-shp_name <- "data/BoundaryData/england_lsoa_2011.shp"
+shp_name <- "data/BoundaryData/england_lsoa_2021.shp"
 manchester_lsoa <- st_read(shp_name)
 
 #Alternatively, you can download the 'LSOA shapefile' from where we saved the data. 
@@ -42,7 +42,7 @@ download.file("https://www.dropbox.com/s/h5c1okn4m6t3rqe/BoundaryData.zip?dl=1" 
 
 #Important! note that I extract file to the data/BoundaryData folder. You HAVE TO change exdir (the directory to extract files to)
 unzip("data/BoundaryData.zip", exdir = "data")
-manchester_lsoa <- st_read("data/BoundaryData/england_lsoa_2011.shp")
+manchester_lsoa <- st_read("data/BoundaryData/england_lsoa_2021.shp")
 ```
 
 Once you import the data, let's count the number of crimes in each LSOA units like what we did in the week 2.
@@ -55,7 +55,7 @@ crimes_per_lsoa <- crimes %>%
   group_by(lsoa_code) %>%
   summarise(count=n())
 #merge the crime count with the LSOA file
-manchester_crime_lsoa <- left_join(manchester_lsoa, crimes_per_lsoa, by = c("code"="lsoa_code"))
+manchester_crime_lsoa <- left_join(manchester_lsoa, crimes_per_lsoa, by = c("lsoa21cd"="lsoa_code"))
 
 #Any LSOA units with no crime counted (E01005248 and E01005278) are treated as NA, so replace this as 0
 #However, this process you need to carefully proceed. In some context, you could consider 'unknown' or 'missing' not 0
