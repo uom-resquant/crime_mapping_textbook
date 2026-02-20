@@ -36,7 +36,7 @@ manchester_lsoa <- st_read(shp_name)
 
 #Alternatively, you can download the 'LSOA shapefile' from where we saved the data. 
 #Important! note that I store it in on my 'Data' folder You HAVE TO change that if needed.
-download.file("https://www.dropbox.com/s/h5c1okn4m6t3rqe/BoundaryData.zip?dl=1" , 
+download.file("https://www.dropbox.com/scl/fi/p87no0fnvfgjem0z19u7g/Boundary.zip?rlkey=1m9cfqpvnnadpwk517dlliw1j&dl=1" , 
               destfile="data/BoundaryData.zip", # change to your local directory
               mode = "wb") # write binary data
 

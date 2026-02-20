@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2026-02-10" />
+<meta name="date" content="2026-02-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -577,7 +577,7 @@ This will be important later on when we are linking data from different projecti
 <p>Or, if you know the path to your file, you can code it in there, within quotation marks:</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="making-maps-in-r.html#cb53-1" tabindex="-1"></a>crimes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/crimes_w_lsoa_codes_attached.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 32058 Columns: 12
-## ── Column specification ────────────────────────────────
+## ── Column specification ─────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (9): Crime.ID, Month, Reported.by, Falls.within, Location, Crime.type, L...
 ## dbl (2): Longitude, Latitude
@@ -695,6 +695,7 @@ This will be important later on when we are linking data from different projecti
 <h3><span class="header-section-number">2.4.1</span> Mapping points with sf<a href="making-maps-in-r.html#mapping-points-with-sf" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Let’s get started with making some maps using <code>sf</code>. First, make sure you install the package, and then load with <code>library()</code> function.</p>
 <div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="making-maps-in-r.html#cb72-1" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code></pre></div>
+<pre><code>## Warning: package &#39;sf&#39; was built under R version 4.5.2</code></pre>
 <pre><code>## Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</code></pre>
 <p>Now we can use the functions of sf in order to introduce geometries. Let’s start with the points</p>
 <div id="activity-3-creating-a-sf-object-of-points" class="section level4 hasAnchor" number="2.4.1.1">
@@ -705,11 +706,11 @@ This will be important later on when we are linking data from different projecti
 <p>Latitude longitude coordinates specify location on the <strong>WGS 84</strong> CRS (remember I said to keep this one in mind!). We can tell R that this is our CRS of choice by including it’s [EPSG identifier]
 (<a href="https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset" class="uri">https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset</a>) as a parameter in our function. It is handy to know the more common EPSG identifiers. For example, for WGS84 the EPSG identifier is <em>4326</em>. For British National Grid, the identifier is <em>27700</em>. We will be making use of these numbers, so do note them down somewhere.</p>
 <p>Putting it all together in practice, we can create a simple features object from our dataframe using the latitude and longitude columns:</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="making-maps-in-r.html#cb74-1" tabindex="-1"></a>crimes_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(crimes,                                     <span class="co">#dataframe</span></span>
-<span id="cb74-2"><a href="making-maps-in-r.html#cb74-2" tabindex="-1"></a>                      <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;latitude&quot;</span>),        <span class="co">#columns with coordinates</span></span>
-<span id="cb74-3"><a href="making-maps-in-r.html#cb74-3" tabindex="-1"></a>                      <span class="at">crs =</span> <span class="dv">4326</span>)                                 <span class="co">#crs is WGS84</span></span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="making-maps-in-r.html#cb75-1" tabindex="-1"></a>crimes_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(crimes,                                     <span class="co">#dataframe</span></span>
+<span id="cb75-2"><a href="making-maps-in-r.html#cb75-2" tabindex="-1"></a>                      <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;latitude&quot;</span>),        <span class="co">#columns with coordinates</span></span>
+<span id="cb75-3"><a href="making-maps-in-r.html#cb75-3" tabindex="-1"></a>                      <span class="at">crs =</span> <span class="dv">4326</span>)                                 <span class="co">#crs is WGS84</span></span></code></pre></div>
 <p>We can see that this is now a simple features object using the class() function the we see the result “sf”:</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="making-maps-in-r.html#cb75-1" tabindex="-1"></a><span class="fu">class</span>(crimes_sf)</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="making-maps-in-r.html#cb76-1" tabindex="-1"></a><span class="fu">class</span>(crimes_sf)</span></code></pre></div>
 <pre><code>## [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
 <p>You might also notice something else that is different between crimes and crimes_sf. Have a look at the dimension (hint look in your ‘Environment’ tab). Do you see? Discuss what you think is different with your neighour or one of the teaching team.</p>
 <blockquote>
@@ -740,14 +741,14 @@ This will be important later on when we are linking data from different projecti
 <p>This will result in a final plot:</p>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 <p>Taking our crime data as an example, we would build up our plot as follows. First let’s create a small illustrative dataset of only the crimes of “Robbery”, “Shoplifting”, and “Theft from the person”.</p>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="making-maps-in-r.html#cb78-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb78-2"><a href="making-maps-in-r.html#cb78-2" tabindex="-1"></a></span>
-<span id="cb78-3"><a href="making-maps-in-r.html#cb78-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> crimes <span class="sc">%&gt;%</span> </span>
-<span id="cb78-4"><a href="making-maps-in-r.html#cb78-4" tabindex="-1"></a>  <span class="fu">filter</span>(crime_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Robbery&quot;</span>,<span class="st">&quot;Shoplifting&quot;</span>, <span class="st">&quot;Theft from the person&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb78-5"><a href="making-maps-in-r.html#cb78-5" tabindex="-1"></a>  <span class="fu">group_by</span>(crime_type) <span class="sc">%&gt;%</span> </span>
-<span id="cb78-6"><a href="making-maps-in-r.html#cb78-6" tabindex="-1"></a>  <span class="fu">count</span>() </span>
-<span id="cb78-7"><a href="making-maps-in-r.html#cb78-7" tabindex="-1"></a>  </span>
-<span id="cb78-8"><a href="making-maps-in-r.html#cb78-8" tabindex="-1"></a>df</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="making-maps-in-r.html#cb79-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb79-2"><a href="making-maps-in-r.html#cb79-2" tabindex="-1"></a></span>
+<span id="cb79-3"><a href="making-maps-in-r.html#cb79-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> crimes <span class="sc">%&gt;%</span> </span>
+<span id="cb79-4"><a href="making-maps-in-r.html#cb79-4" tabindex="-1"></a>  <span class="fu">filter</span>(crime_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Robbery&quot;</span>,<span class="st">&quot;Shoplifting&quot;</span>, <span class="st">&quot;Theft from the person&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb79-5"><a href="making-maps-in-r.html#cb79-5" tabindex="-1"></a>  <span class="fu">group_by</span>(crime_type) <span class="sc">%&gt;%</span> </span>
+<span id="cb79-6"><a href="making-maps-in-r.html#cb79-6" tabindex="-1"></a>  <span class="fu">count</span>() </span>
+<span id="cb79-7"><a href="making-maps-in-r.html#cb79-7" tabindex="-1"></a>  </span>
+<span id="cb79-8"><a href="making-maps-in-r.html#cb79-8" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 2
 ## # Groups:   crime_type [3]
 ##   crime_type                n
@@ -756,61 +757,61 @@ This will be important later on when we are linking data from different projecti
 ## 2 Shoplifting            1479
 ## 3 Theft from the person   718</code></pre>
 <p>Load ggplot2 package</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="making-maps-in-r.html#cb80-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="making-maps-in-r.html#cb81-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
 <p>Now let us add the layers to our ggplot object. First, the data layer:</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="making-maps-in-r.html#cb81-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n))</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="making-maps-in-r.html#cb82-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n))</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
 <p>Then add the geometry (in this case, <code>geom_col()</code>):</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="making-maps-in-r.html#cb82-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n)) <span class="sc">+</span> </span>
-<span id="cb82-2"><a href="making-maps-in-r.html#cb82-2" tabindex="-1"></a>  <span class="fu">geom_col</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="making-maps-in-r.html#cb83-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n)) <span class="sc">+</span> </span>
+<span id="cb83-2"><a href="making-maps-in-r.html#cb83-2" tabindex="-1"></a>  <span class="fu">geom_col</span>()</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
 <p>Then our annotations:</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="making-maps-in-r.html#cb83-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n)) <span class="sc">+</span> </span>
-<span id="cb83-2"><a href="making-maps-in-r.html#cb83-2" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
-<span id="cb83-3"><a href="making-maps-in-r.html#cb83-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Frequency of crime types&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb83-4"><a href="making-maps-in-r.html#cb83-4" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Crime type&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb83-5"><a href="making-maps-in-r.html#cb83-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>)</span></code></pre></div>
-<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
-<p>We can also specify our themes, by using a custom theme such as <code>theme_minimal()</code>, and by adding our own specifications within an additional <code>theme()</code> function:</p>
 <div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="making-maps-in-r.html#cb84-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n)) <span class="sc">+</span> </span>
 <span id="cb84-2"><a href="making-maps-in-r.html#cb84-2" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
 <span id="cb84-3"><a href="making-maps-in-r.html#cb84-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Frequency of crime types&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb84-4"><a href="making-maps-in-r.html#cb84-4" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Crime type&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb84-5"><a href="making-maps-in-r.html#cb84-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb84-6"><a href="making-maps-in-r.html#cb84-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb84-7"><a href="making-maps-in-r.html#cb84-7" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>), </span>
-<span id="cb84-8"><a href="making-maps-in-r.html#cb84-8" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">size=</span><span class="dv">1</span>))</span></code></pre></div>
+<span id="cb84-5"><a href="making-maps-in-r.html#cb84-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>)</span></code></pre></div>
+<p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p>We can also specify our themes, by using a custom theme such as <code>theme_minimal()</code>, and by adding our own specifications within an additional <code>theme()</code> function:</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="making-maps-in-r.html#cb85-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n)) <span class="sc">+</span> </span>
+<span id="cb85-2"><a href="making-maps-in-r.html#cb85-2" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
+<span id="cb85-3"><a href="making-maps-in-r.html#cb85-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Frequency of crime types&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb85-4"><a href="making-maps-in-r.html#cb85-4" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Crime type&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb85-5"><a href="making-maps-in-r.html#cb85-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb85-6"><a href="making-maps-in-r.html#cb85-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb85-7"><a href="making-maps-in-r.html#cb85-7" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>), </span>
+<span id="cb85-8"><a href="making-maps-in-r.html#cb85-8" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">size=</span><span class="dv">1</span>))</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 <p>We can add further specifications within the <code>aes()</code> (aesthetics) function, where we add additional layers from our data, to represent even more information in our charts, for example the outcomes for each crime.</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="making-maps-in-r.html#cb85-1" tabindex="-1"></a><span class="co"># create new dataframe (df) including last_outcome_category variable</span></span>
-<span id="cb85-2"><a href="making-maps-in-r.html#cb85-2" tabindex="-1"></a></span>
-<span id="cb85-3"><a href="making-maps-in-r.html#cb85-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> crimes <span class="sc">%&gt;%</span> </span>
-<span id="cb85-4"><a href="making-maps-in-r.html#cb85-4" tabindex="-1"></a>  <span class="fu">filter</span>(crime_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Robbery&quot;</span>, <span class="st">&quot;Shoplifting&quot;</span>, <span class="st">&quot;Theft from the person&quot;</span>), </span>
-<span id="cb85-5"><a href="making-maps-in-r.html#cb85-5" tabindex="-1"></a>         last_outcome_category <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Offender given penalty notice&quot;</span>, <span class="st">&quot;Local resolution&quot;</span>, <span class="st">&quot;Offender given a caution&quot;</span>, <span class="st">&quot;Unable to prosecute suspect&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb85-6"><a href="making-maps-in-r.html#cb85-6" tabindex="-1"></a>  <span class="fu">group_by</span>(crime_type, last_outcome_category) <span class="sc">%&gt;%</span> </span>
-<span id="cb85-7"><a href="making-maps-in-r.html#cb85-7" tabindex="-1"></a>  <span class="fu">count</span>() </span>
-<span id="cb85-8"><a href="making-maps-in-r.html#cb85-8" tabindex="-1"></a></span>
-<span id="cb85-9"><a href="making-maps-in-r.html#cb85-9" tabindex="-1"></a><span class="co"># plot including new variable with fill= parameter in aes() function</span></span>
-<span id="cb85-10"><a href="making-maps-in-r.html#cb85-10" tabindex="-1"></a></span>
-<span id="cb85-11"><a href="making-maps-in-r.html#cb85-11" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n, <span class="at">fill =</span> last_outcome_category)) <span class="sc">+</span> </span>
-<span id="cb85-12"><a href="making-maps-in-r.html#cb85-12" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
-<span id="cb85-13"><a href="making-maps-in-r.html#cb85-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Frequency of crime types&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb85-14"><a href="making-maps-in-r.html#cb85-14" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Crime type&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb85-15"><a href="making-maps-in-r.html#cb85-15" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb85-16"><a href="making-maps-in-r.html#cb85-16" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb85-17"><a href="making-maps-in-r.html#cb85-17" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>), </span>
-<span id="cb85-18"><a href="making-maps-in-r.html#cb85-18" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill=</span><span class="cn">NA</span>,  <span class="at">size=</span><span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="making-maps-in-r.html#cb86-1" tabindex="-1"></a><span class="co"># create new dataframe (df) including last_outcome_category variable</span></span>
+<span id="cb86-2"><a href="making-maps-in-r.html#cb86-2" tabindex="-1"></a></span>
+<span id="cb86-3"><a href="making-maps-in-r.html#cb86-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> crimes <span class="sc">%&gt;%</span> </span>
+<span id="cb86-4"><a href="making-maps-in-r.html#cb86-4" tabindex="-1"></a>  <span class="fu">filter</span>(crime_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Robbery&quot;</span>, <span class="st">&quot;Shoplifting&quot;</span>, <span class="st">&quot;Theft from the person&quot;</span>), </span>
+<span id="cb86-5"><a href="making-maps-in-r.html#cb86-5" tabindex="-1"></a>         last_outcome_category <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Offender given penalty notice&quot;</span>, <span class="st">&quot;Local resolution&quot;</span>, <span class="st">&quot;Offender given a caution&quot;</span>, <span class="st">&quot;Unable to prosecute suspect&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb86-6"><a href="making-maps-in-r.html#cb86-6" tabindex="-1"></a>  <span class="fu">group_by</span>(crime_type, last_outcome_category) <span class="sc">%&gt;%</span> </span>
+<span id="cb86-7"><a href="making-maps-in-r.html#cb86-7" tabindex="-1"></a>  <span class="fu">count</span>() </span>
+<span id="cb86-8"><a href="making-maps-in-r.html#cb86-8" tabindex="-1"></a></span>
+<span id="cb86-9"><a href="making-maps-in-r.html#cb86-9" tabindex="-1"></a><span class="co"># plot including new variable with fill= parameter in aes() function</span></span>
+<span id="cb86-10"><a href="making-maps-in-r.html#cb86-10" tabindex="-1"></a></span>
+<span id="cb86-11"><a href="making-maps-in-r.html#cb86-11" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type, <span class="at">y =</span> n, <span class="at">fill =</span> last_outcome_category)) <span class="sc">+</span> </span>
+<span id="cb86-12"><a href="making-maps-in-r.html#cb86-12" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
+<span id="cb86-13"><a href="making-maps-in-r.html#cb86-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Frequency of crime types&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb86-14"><a href="making-maps-in-r.html#cb86-14" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Crime type&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb86-15"><a href="making-maps-in-r.html#cb86-15" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb86-16"><a href="making-maps-in-r.html#cb86-16" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb86-17"><a href="making-maps-in-r.html#cb86-17" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>), </span>
+<span id="cb86-18"><a href="making-maps-in-r.html#cb86-18" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill=</span><span class="cn">NA</span>,  <span class="at">size=</span><span class="dv">1</span>))</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
 <p>We can be explicit about the colours we want to use with the function <code>scale_fill_brewer()</code>, which we can also use to rename our legend. Don’t worry too much at this point about where the palette comes from; later in the module we will discuss colour in more detail.</p>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="making-maps-in-r.html#cb86-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type,  <span class="at">y =</span> n, <span class="at">fill =</span> last_outcome_category)) <span class="sc">+</span> </span>
-<span id="cb86-2"><a href="making-maps-in-r.html#cb86-2" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
-<span id="cb86-3"><a href="making-maps-in-r.html#cb86-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Frequency of crime types&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb86-4"><a href="making-maps-in-r.html#cb86-4" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Crime type&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb86-5"><a href="making-maps-in-r.html#cb86-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb86-6"><a href="making-maps-in-r.html#cb86-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb86-7"><a href="making-maps-in-r.html#cb86-7" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>), </span>
-<span id="cb86-8"><a href="making-maps-in-r.html#cb86-8" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">size=</span><span class="dv">1</span>)) <span class="sc">+</span> </span>
-<span id="cb86-9"><a href="making-maps-in-r.html#cb86-9" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">type =</span> <span class="st">&quot;qual&quot;</span>, <span class="at">palette =</span> <span class="dv">3</span>, <span class="at">name =</span> <span class="st">&quot;Outcome&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="making-maps-in-r.html#cb87-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> crime_type,  <span class="at">y =</span> n, <span class="at">fill =</span> last_outcome_category)) <span class="sc">+</span> </span>
+<span id="cb87-2"><a href="making-maps-in-r.html#cb87-2" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
+<span id="cb87-3"><a href="making-maps-in-r.html#cb87-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Frequency of crime types&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb87-4"><a href="making-maps-in-r.html#cb87-4" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Crime type&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb87-5"><a href="making-maps-in-r.html#cb87-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Number of crimes&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb87-6"><a href="making-maps-in-r.html#cb87-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb87-7"><a href="making-maps-in-r.html#cb87-7" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>), </span>
+<span id="cb87-8"><a href="making-maps-in-r.html#cb87-8" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">size=</span><span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb87-9"><a href="making-maps-in-r.html#cb87-9" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">type =</span> <span class="st">&quot;qual&quot;</span>, <span class="at">palette =</span> <span class="dv">3</span>, <span class="at">name =</span> <span class="st">&quot;Outcome&quot;</span>)</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
 <p>There are many more options. While this here is not the greatest graph you’ll ever see, it illustrates the process of building up your graphics the ggplot way. Do read up on <code>ggplot2</code> for example in <span class="citation">Wickham and Grolemund (<a href="#ref-Wickham_2017">2017</a>)</span>. In later chapters, we will talk more about visualisation, colour choice, and more!</p>
 <p>So how can we use this for spatial data? We can use the <code>geom_sf()</code> function to do so.</p>
@@ -818,26 +819,26 @@ This will be important later on when we are linking data from different projecti
 <div id="activity-5-mapping-our-points" class="section level4 hasAnchor" number="2.4.1.3">
 <h4><span class="header-section-number">2.4.1.3</span> Activity 5: Mapping our points<a href="making-maps-in-r.html#activity-5-mapping-our-points" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Using <code>geom_sf</code> is slightly different to other geometries, for example how we used <code>geom_bar()</code> above. First we initiate the plot with the <code>ggplot()</code> function but don’t include the data in there. Instead, it is in the geometry where we add the data. And second we don’t need to specify the mapping of x and y. Since this is in the geometry column of our spatial object. Like so:</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="making-maps-in-r.html#cb87-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb87-2"><a href="making-maps-in-r.html#cb87-2" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> crimes_sf) <span class="sc">+</span> </span>
-<span id="cb87-3"><a href="making-maps-in-r.html#cb87-3" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() </span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="making-maps-in-r.html#cb88-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb88-2"><a href="making-maps-in-r.html#cb88-2" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> crimes_sf) <span class="sc">+</span> </span>
+<span id="cb88-3"><a href="making-maps-in-r.html#cb88-3" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() </span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
 <p>And here we have a map of each point in our data set, each recorded crime in June 2019 in Greater Manchester.</p>
 <p>Would you call this a map though? While it is presenting spatial data, there is not a lot of meaning being communicated. Point maps generally can be messy and their uses are specific to certain situations and cases, usually when you have fewer points, but here, these points are especially devoid of any meaning, as they are floating in a graph grid. So let’s give it a basemap.</p>
 <p>We can do this by adding a layer to our graph object. Specifically we will use the <code>annotation_map_tile()</code> from the <code>ggspatial</code> package. This provides us with a static Open Street Map layer behind our data, giving it (some) more context.</p>
 <p>Remember to load the package (and install if you haven’t already)</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="making-maps-in-r.html#cb88-1" tabindex="-1"></a><span class="fu">library</span>(ggspatial)</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="making-maps-in-r.html#cb89-1" tabindex="-1"></a><span class="fu">library</span>(ggspatial)</span></code></pre></div>
 <p>And then use the <code>annotation_map_tile()</code> function, making sure to place it before the geom_sf points layer, so the background map is placed first, and the points on top of that:</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="making-maps-in-r.html#cb89-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb89-2"><a href="making-maps-in-r.html#cb89-2" tabindex="-1"></a> <span class="fu">annotation_map_tile</span>() <span class="sc">+</span></span>
-<span id="cb89-3"><a href="making-maps-in-r.html#cb89-3" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> crimes_sf)</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="making-maps-in-r.html#cb90-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb90-2"><a href="making-maps-in-r.html#cb90-2" tabindex="-1"></a> <span class="fu">annotation_map_tile</span>() <span class="sc">+</span></span>
+<span id="cb90-3"><a href="making-maps-in-r.html#cb90-3" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> crimes_sf)</span></code></pre></div>
 <pre><code>## Zoom: 9</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 <p><strong><em>NOTE:</em></strong> if you get an error, read it first. If it says something like you are missing a package (e.g. ‘prettymapr’) then install that package!</p>
 <p>If that doesn’t solve the problem, try the following code instead:</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="making-maps-in-r.html#cb91-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb91-2"><a href="making-maps-in-r.html#cb91-2" tabindex="-1"></a>  ggspatial<span class="sc">::</span><span class="fu">annotation_map_tile</span>(<span class="at">cachedir =</span> <span class="fu">system.file</span>(<span class="st">&quot;rosm.cache&quot;</span>, <span class="at">package =</span> <span class="st">&quot;ggspatial&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb91-3"><a href="making-maps-in-r.html#cb91-3" tabindex="-1"></a>   <span class="fu">geom_sf</span>(<span class="at">data =</span> crimes_sf)</span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="making-maps-in-r.html#cb92-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb92-2"><a href="making-maps-in-r.html#cb92-2" tabindex="-1"></a>  ggspatial<span class="sc">::</span><span class="fu">annotation_map_tile</span>(<span class="at">cachedir =</span> <span class="fu">system.file</span>(<span class="st">&quot;rosm.cache&quot;</span>, <span class="at">package =</span> <span class="st">&quot;ggspatial&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb92-3"><a href="making-maps-in-r.html#cb92-3" tabindex="-1"></a>   <span class="fu">geom_sf</span>(<span class="at">data =</span> crimes_sf)</span></code></pre></div>
 <p>So what you see above is what we can call a <strong>basemap</strong>. The term basemap is seen often in GIS and refers to a collection of GIS data and/or orthorectified imagery that form the background setting for a map. The function of the basemap is to provide background detail necessary to orient the location of the map. Basemaps also add to the aesthetic appeal of a map.</p>
 <p>In the lecture and some readings these are described as <em>reference maps</em>. We often may want to use these reference maps as <strong>basemaps</strong> for our thematic and point maps. They may give us context and help with the interpretation. You can see above that you are seeing the <em>Open Street Map</em> Basemap. This is one option but there are others.</p>
 <p>Anyway let’s leave out points for now, and move on to how we might map our lines and polygons.</p>
@@ -876,8 +877,8 @@ This will be important later on when we are linking data from different projecti
 <p><img src="img/save_link_as.png" /></p>
 <hr />
 <p>Navigate to the folder you have created for this analysis, and save the .zip file there. Extract the file contents using whatever you like to use to unzip compressed files.</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="making-maps-in-r.html#cb92-1" tabindex="-1"></a><span class="co"># For example,</span></span>
-<span id="cb92-2"><a href="making-maps-in-r.html#cb92-2" tabindex="-1"></a><span class="fu">unzip</span>(<span class="st">&quot;BoundaryData.zip&quot;</span>, <span class="at">exdir =</span> <span class="st">&quot;BoundaryData&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="making-maps-in-r.html#cb93-1" tabindex="-1"></a><span class="co"># For example,</span></span>
+<span id="cb93-2"><a href="making-maps-in-r.html#cb93-2" tabindex="-1"></a><span class="fu">unzip</span>(<span class="st">&quot;BoundaryData.zip&quot;</span>, <span class="at">exdir =</span> <span class="st">&quot;BoundaryData&quot;</span>)</span></code></pre></div>
 <p>You should end up with a folder called “BoundaryData”. Have a look at its contents:</p>
 <hr />
 <p><img src="img/folder_contents.png" /></p>
@@ -901,12 +902,12 @@ Contains OS data © Crown copyright and database right [year]”</p>
 <h4><span class="header-section-number">2.4.2.2</span> Activity 7: Reading shapefiles into R<a href="making-maps-in-r.html#activity-7-reading-shapefiles-into-r" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To read in your data, you will need to know the path to where you have saved it. Ideally this will be in your data folder in your project directory.</p>
 <p>Let’s create an object and assign it our shapefile’s name:</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="making-maps-in-r.html#cb93-1" tabindex="-1"></a><span class="co"># Remember to use the appropriate pathfile in your case </span></span>
-<span id="cb93-2"><a href="making-maps-in-r.html#cb93-2" tabindex="-1"></a><span class="co"># alt, manchester_lsoa &lt;- st_read(file.choose())</span></span>
-<span id="cb93-3"><a href="making-maps-in-r.html#cb93-3" tabindex="-1"></a>shp_name <span class="ot">&lt;-</span> <span class="st">&quot;data/BoundaryData/england_lsoa_2021.shp&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="making-maps-in-r.html#cb94-1" tabindex="-1"></a><span class="co"># Remember to use the appropriate pathfile in your case </span></span>
+<span id="cb94-2"><a href="making-maps-in-r.html#cb94-2" tabindex="-1"></a><span class="co"># alt, manchester_lsoa &lt;- st_read(file.choose())</span></span>
+<span id="cb94-3"><a href="making-maps-in-r.html#cb94-3" tabindex="-1"></a>shp_name <span class="ot">&lt;-</span> <span class="st">&quot;data/BoundaryData/england_lsoa_2021.shp&quot;</span></span></code></pre></div>
 <p>Make sure that this is saved in your working directory, and you have set your working directory.</p>
 <p>Now use the <code>st_read()</code> function to read in the shapefile:</p>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="making-maps-in-r.html#cb94-1" tabindex="-1"></a>manchester_lsoa <span class="ot">&lt;-</span> <span class="fu">st_read</span>(shp_name)</span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="making-maps-in-r.html#cb95-1" tabindex="-1"></a>manchester_lsoa <span class="ot">&lt;-</span> <span class="fu">st_read</span>(shp_name)</span></code></pre></div>
 <pre><code>## Reading layer `england_lsoa_2021&#39; from data source 
 ##   `/Users/user/Desktop/resquant/crime_mapping_textbook/data/BoundaryData/england_lsoa_2021.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
@@ -916,7 +917,7 @@ Contains OS data © Crown copyright and database right [year]”</p>
 ## Bounding box:  xmin: 378833.2 ymin: 382620.6 xmax: 390350.2 ymax: 405357.1
 ## Projected CRS: OSGB36 / British National Grid</code></pre>
 <p>Now you have your spatial data file. You can have a look at what sort of data it contains, the same way you would view a dataframe, with the <code>View()</code> function:</p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="making-maps-in-r.html#cb96-1" tabindex="-1"></a><span class="fu">View</span>(manchester_lsoa)</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="making-maps-in-r.html#cb97-1" tabindex="-1"></a><span class="fu">View</span>(manchester_lsoa)</span></code></pre></div>
 <pre><code>## Rows: 295
 ## Columns: 5
 ## $ lsoa21cd &lt;chr&gt; &quot;E01005245&quot;, &quot;E01005147&quot;, &quot;E01005192&quot;, &quot;E01034110&quot;, &quot;E0103410…
@@ -925,8 +926,8 @@ Contains OS data © Crown copyright and database right [year]”</p>
 ## $ name     &lt;chr&gt; &quot;Manchester 024C&quot;, &quot;Manchester 058B&quot;, &quot;Manchester 021D&quot;, &quot;Man…
 ## $ geometry &lt;POLYGON [m]&gt; POLYGON ((383670.8 395913.9..., POLYGON ((383916 4011…</code></pre>
 <p>And of course, since it’s spatial data, you can map it using the geom_sf() function, as we did with our points:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="making-maps-in-r.html#cb98-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb98-2"><a href="making-maps-in-r.html#cb98-2" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa)</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="making-maps-in-r.html#cb99-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb99-2"><a href="making-maps-in-r.html#cb99-2" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa)</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
 <p>Great, we now have an outline of the LSOAs in Manchester. Notice how the shape is different to that of the points in our crime data. Why do you think this is? Discuss your thoughts with your neighbour. Or one of the teaching team. Don’t be shy!</p>
 </div>
@@ -935,31 +936,31 @@ Contains OS data © Crown copyright and database right [year]”</p>
 <p>In order to map crimes to LSOAs we might want to take a step back and think about unit of analysis at which our data are collected. In our original dataframe of crimes, we saw that each crime incident is one row. So the unit of anlysis is each crime. Since we were looking to map each crime at the location it happened, we used the latitude and longitude supplied with each one, and this supplied a geometry each for each crime type.</p>
 <p>However, when we are looking to map our data to LSOA level, we need to match the crime data to the geometry we wish to display.</p>
 <p>Have a look at the manchester_lsoa object we mapped above. How many rows (observations) does it have? You can check this by looking in the Environment pane, or by using the <code>nrow()</code> function.</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="making-maps-in-r.html#cb99-1" tabindex="-1"></a><span class="fu">nrow</span>(manchester_lsoa)</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="making-maps-in-r.html#cb100-1" tabindex="-1"></a><span class="fu">nrow</span>(manchester_lsoa)</span></code></pre></div>
 <pre><code>## [1] 295</code></pre>
 <p>You can see this has 295 rows. This means we have geometries for 295 LSOAs.</p>
 <p>On the other hand, our crimes dataframe has 32058 rows, one for each crime (observation). So how can we match these up? The answer lies in thinking about what it is that our map using LSOAs as our unit of analysis will be able to tell us. Think of other maps of areas - what are they usually telling you? Usually we expect to see crimes per neighbourhood - something like this. So our unit of analysis needs to be LSOA, and for each one we need to know how many crimes occurred in that area.</p>
 <p>To achieve this, we will wrangle our data using functions from the <code>dplyr</code> package. This is a package for conducting all sorts of operations with data frames. We are not going to cover the full functionality of dplyr (which you can consult in <a href="https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html">this tutorial</a>), but we are going to cover three different very useful elements of dplyr: the select function, the group_by function, and the piping operator.</p>
 <p>First load the library:</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="making-maps-in-r.html#cb101-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="making-maps-in-r.html#cb102-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 <p>The <code>select()</code> function provides you with a simple way of subsetting columns from a data frame. So, say we just want to use one variable, lsoa_code, from the crimes dataframe and store it in a new object we could write the following code:</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="making-maps-in-r.html#cb102-1" tabindex="-1"></a>new_object <span class="ot">&lt;-</span> <span class="fu">select</span>(crimes, lsoa_code)</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="making-maps-in-r.html#cb103-1" tabindex="-1"></a>new_object <span class="ot">&lt;-</span> <span class="fu">select</span>(crimes, lsoa_code)</span></code></pre></div>
 <p>We can also use the <code>group_by()</code> function for performing group operations. Essentially this function ask R to group cases within categories and then do something with those grouped cases. So, say, we want to count the number of cases within each LSOA, we could use the following code:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="making-maps-in-r.html#cb103-1" tabindex="-1"></a><span class="co">#First we group the cases by LSOA code and stored this organised data into a new object</span></span>
-<span id="cb103-2"><a href="making-maps-in-r.html#cb103-2" tabindex="-1"></a>grouped_crimes <span class="ot">&lt;-</span> <span class="fu">group_by</span>(new_object, lsoa_code)</span>
-<span id="cb103-3"><a href="making-maps-in-r.html#cb103-3" tabindex="-1"></a></span>
-<span id="cb103-4"><a href="making-maps-in-r.html#cb103-4" tabindex="-1"></a><span class="co">#Then we could count the number of cases within each category and use the summarise function to print the results</span></span>
-<span id="cb103-5"><a href="making-maps-in-r.html#cb103-5" tabindex="-1"></a><span class="fu">summarise</span>(grouped_crimes, <span class="at">count =</span> <span class="fu">n</span>())</span>
-<span id="cb103-6"><a href="making-maps-in-r.html#cb103-6" tabindex="-1"></a></span>
-<span id="cb103-7"><a href="making-maps-in-r.html#cb103-7" tabindex="-1"></a><span class="co">#We could infact create a new dataframe with these results</span></span>
-<span id="cb103-8"><a href="making-maps-in-r.html#cb103-8" tabindex="-1"></a></span>
-<span id="cb103-9"><a href="making-maps-in-r.html#cb103-9" tabindex="-1"></a>crime_per_LSOA <span class="ot">&lt;-</span> <span class="fu">summarise</span>(grouped_crimes, <span class="at">count =</span> <span class="fu">n</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="making-maps-in-r.html#cb104-1" tabindex="-1"></a><span class="co">#First we group the cases by LSOA code and stored this organised data into a new object</span></span>
+<span id="cb104-2"><a href="making-maps-in-r.html#cb104-2" tabindex="-1"></a>grouped_crimes <span class="ot">&lt;-</span> <span class="fu">group_by</span>(new_object, lsoa_code)</span>
+<span id="cb104-3"><a href="making-maps-in-r.html#cb104-3" tabindex="-1"></a></span>
+<span id="cb104-4"><a href="making-maps-in-r.html#cb104-4" tabindex="-1"></a><span class="co">#Then we could count the number of cases within each category and use the summarise function to print the results</span></span>
+<span id="cb104-5"><a href="making-maps-in-r.html#cb104-5" tabindex="-1"></a><span class="fu">summarise</span>(grouped_crimes, <span class="at">count =</span> <span class="fu">n</span>())</span>
+<span id="cb104-6"><a href="making-maps-in-r.html#cb104-6" tabindex="-1"></a></span>
+<span id="cb104-7"><a href="making-maps-in-r.html#cb104-7" tabindex="-1"></a><span class="co">#We could infact create a new dataframe with these results</span></span>
+<span id="cb104-8"><a href="making-maps-in-r.html#cb104-8" tabindex="-1"></a></span>
+<span id="cb104-9"><a href="making-maps-in-r.html#cb104-9" tabindex="-1"></a>crime_per_LSOA <span class="ot">&lt;-</span> <span class="fu">summarise</span>(grouped_crimes, <span class="at">count =</span> <span class="fu">n</span>())</span></code></pre></div>
 <p>As you can see we can do what we wanted, create a new dataframe with the required info, but if we do this we are creating many objects that we don’t need, one at each step. Instead there is a more efficient way of doing this, without so many intermediate steps clogging up our environment with unnecessary objects. That’s where the piping operator comes handy. The piping operator is written like <code>%&gt;%</code> and it can be read as “and then”. Look at the code below:</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="making-maps-in-r.html#cb104-1" tabindex="-1"></a><span class="co">#First we say create a new object called crime_per_lsoa, and then select only the lsoa_code column to exist in this object, and then group this object by the LSOA.code, and then count the number of cases within each category, this is what I want in the new object.</span></span>
-<span id="cb104-2"><a href="making-maps-in-r.html#cb104-2" tabindex="-1"></a></span>
-<span id="cb104-3"><a href="making-maps-in-r.html#cb104-3" tabindex="-1"></a>crimes_per_lsoa <span class="ot">&lt;-</span> crimes <span class="sc">%&gt;%</span></span>
-<span id="cb104-4"><a href="making-maps-in-r.html#cb104-4" tabindex="-1"></a>  <span class="fu">group_by</span>(lsoa21cd) <span class="sc">%&gt;%</span></span>
-<span id="cb104-5"><a href="making-maps-in-r.html#cb104-5" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count=</span><span class="fu">n</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="making-maps-in-r.html#cb105-1" tabindex="-1"></a><span class="co">#First we say create a new object called crime_per_lsoa, and then select only the lsoa_code column to exist in this object, and then group this object by the LSOA.code, and then count the number of cases within each category, this is what I want in the new object.</span></span>
+<span id="cb105-2"><a href="making-maps-in-r.html#cb105-2" tabindex="-1"></a></span>
+<span id="cb105-3"><a href="making-maps-in-r.html#cb105-3" tabindex="-1"></a>crimes_per_lsoa <span class="ot">&lt;-</span> crimes <span class="sc">%&gt;%</span></span>
+<span id="cb105-4"><a href="making-maps-in-r.html#cb105-4" tabindex="-1"></a>  <span class="fu">group_by</span>(lsoa21cd) <span class="sc">%&gt;%</span></span>
+<span id="cb105-5"><a href="making-maps-in-r.html#cb105-5" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count=</span><span class="fu">n</span>())</span></code></pre></div>
 <p>Essentially we obtain the same results but with more streamlined and elegant code, and not needing additional objects in our environment.</p>
 <p>And now we have a new object, <em>crimes_per_lsoa</em> if we have a look at this one, we can now see what each row represents one LSOA, and next to it we have a variable for the number of crimes from each area. We created a new dataframe from a frequency table, and as each row of the crimes data was one crime, the frequency table tells us the number of crimes which occurred in each LSOA.</p>
 <p>Those of you playing close attention might note that there are still more observations in this dataframe (1690) than in the manchester_lsoas one (295). Why do you think that might be? Look back at how you answered the final question for the previous activity for a hint.</p>
@@ -981,31 +982,31 @@ Contains OS data © Crown copyright and database right [year]”</p>
 <p>This is all we are doing, when merging tables: joining the two data sets using a common column. Why are we using <em>left</em> join though? There is a whole family of join functions as part of dplyr which join datasets. There is also a <code>right_join()</code>, and an <code>inner_join()</code> and an <code>outer_join()</code> and a <code>full_join()</code>. But here we use <code>left_join()</code>, because that way we keep all the rows in <span class="math inline">\(x\)</span> (the left-hand side dataframe), and join to it all the matched columns in <span class="math inline">\(y\)</span> (the right-hand side dataframe).</p>
 <p>So let’s join the crimes data to the spatial data, using left_join():</p>
 <p>We have to tell left_join what are the dataframes we want to join, as well as the names of the columns that contain the matching values in each one. This is “code” in the manchester_lsoa dataframe and “lsoa_code” in the crimes_per_lsoa dataframe. Like so:</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="making-maps-in-r.html#cb105-1" tabindex="-1"></a>manchester_lsoa <span class="ot">&lt;-</span> <span class="fu">left_join</span>(manchester_lsoa, crimes_per_lsoa, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;lsoa21cd&quot;</span><span class="ot">=</span><span class="st">&quot;lsoa21cd&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="making-maps-in-r.html#cb106-1" tabindex="-1"></a>manchester_lsoa <span class="ot">&lt;-</span> <span class="fu">left_join</span>(manchester_lsoa, crimes_per_lsoa, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;lsoa21cd&quot;</span><span class="ot">=</span><span class="st">&quot;lsoa21cd&quot;</span>))</span></code></pre></div>
 <p>Now if you have a look at the data again, you will see that the column of number of crimes (<code>count</code>) has been added on. You may not want to have to go through this process all the time that you want to work with this data. One thing you could do is to save the “manchester_lsoa” object as a physical file in your machine. You can use the <code>st_write()</code> function from the <code>sf</code> package to do this. If we want to write into a shapefile format, we would do as shown below. Make sure you save this file, for we will come back to it in subsequent weeks.</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="making-maps-in-r.html#cb106-1" tabindex="-1"></a><span class="fu">st_write</span>(manchester_lsoa, <span class="st">&quot;data/BoundaryData/manchester_crime_lsoa.shp&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="making-maps-in-r.html#cb107-1" tabindex="-1"></a><span class="fu">st_write</span>(manchester_lsoa, <span class="st">&quot;data/BoundaryData/manchester_crime_lsoa.shp&quot;</span>)</span></code></pre></div>
 <p><em>Note: if you get an error which says the layer already exists, this means there is already a file with this name in that location. You can add the parameter <code>append = FALSE</code> to overwrite this file, or give it a slightly different name.</em></p>
 </div>
 <div id="activity-10-mapping-our-data-at-polygon-level" class="section level4 hasAnchor" number="2.4.2.5">
 <h4><span class="header-section-number">2.4.2.5</span> Activity 10: Mapping our data at polygon level<a href="making-maps-in-r.html#activity-10-mapping-our-data-at-polygon-level" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Now that we have joined the crimes data to the geometry, you can use this to make our map!</p>
 <p>Remember our original empty map:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="making-maps-in-r.html#cb107-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb107-2"><a href="making-maps-in-r.html#cb107-2" tabindex="-1"></a><span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa)</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="making-maps-in-r.html#cb108-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb108-2"><a href="making-maps-in-r.html#cb108-2" tabindex="-1"></a><span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa)</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
 <p>Well now, since we have the column (variable) for number of crimes here, we can use that to share the polygons based on how many crimes there are in each LSOA. We can do this by specifying the <code>fill=</code> parameter of the <code>geom_sf()</code> function.</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="making-maps-in-r.html#cb108-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb108-2"><a href="making-maps-in-r.html#cb108-2" tabindex="-1"></a><span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa, <span class="fu">aes</span>(<span class="at">fill =</span> count))</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="making-maps-in-r.html#cb109-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb109-2"><a href="making-maps-in-r.html#cb109-2" tabindex="-1"></a><span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa, <span class="fu">aes</span>(<span class="at">fill =</span> count))</span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
 <p>Just like we did with the ggplot bar charts we created earlier, we can adjust the opacity of our thematic map, with the <code>alpha =</code> parameter, add a basemap, with the function <code>annotation_map_tile()</code> and adjust the colour scheme, with the <code>scale_fill_gradient2()</code> function.</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="making-maps-in-r.html#cb109-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb109-2"><a href="making-maps-in-r.html#cb109-2" tabindex="-1"></a>  <span class="fu">annotation_map_tile</span>() <span class="sc">+</span>  <span class="co"># add basemap</span></span>
-<span id="cb109-3"><a href="making-maps-in-r.html#cb109-3" tabindex="-1"></a><span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa, </span>
-<span id="cb109-4"><a href="making-maps-in-r.html#cb109-4" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">fill =</span> count), </span>
-<span id="cb109-5"><a href="making-maps-in-r.html#cb109-5" tabindex="-1"></a>        <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span> <span class="co"># alpha sets the opacity</span></span>
-<span id="cb109-6"><a href="making-maps-in-r.html#cb109-6" tabindex="-1"></a>  <span class="co">#use scale_fill_gradient2() for a different palette </span></span>
-<span id="cb109-7"><a href="making-maps-in-r.html#cb109-7" tabindex="-1"></a>  <span class="co"># and name the variable on the legend</span></span>
-<span id="cb109-8"><a href="making-maps-in-r.html#cb109-8" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">name =</span><span class="st">&quot;Number of crimes&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="making-maps-in-r.html#cb110-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb110-2"><a href="making-maps-in-r.html#cb110-2" tabindex="-1"></a>  <span class="fu">annotation_map_tile</span>() <span class="sc">+</span>  <span class="co"># add basemap</span></span>
+<span id="cb110-3"><a href="making-maps-in-r.html#cb110-3" tabindex="-1"></a><span class="fu">geom_sf</span>(<span class="at">data =</span> manchester_lsoa, </span>
+<span id="cb110-4"><a href="making-maps-in-r.html#cb110-4" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">fill =</span> count), </span>
+<span id="cb110-5"><a href="making-maps-in-r.html#cb110-5" tabindex="-1"></a>        <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span> <span class="co"># alpha sets the opacity</span></span>
+<span id="cb110-6"><a href="making-maps-in-r.html#cb110-6" tabindex="-1"></a>  <span class="co">#use scale_fill_gradient2() for a different palette </span></span>
+<span id="cb110-7"><a href="making-maps-in-r.html#cb110-7" tabindex="-1"></a>  <span class="co"># and name the variable on the legend</span></span>
+<span id="cb110-8"><a href="making-maps-in-r.html#cb110-8" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">name =</span><span class="st">&quot;Number of crimes&quot;</span>) </span></code></pre></div>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-65-1.png" width="672" /></p>
 <p>In subsequent weeks we will play around with other packages in R that you can use to produce this kind of maps. Gradually we will discuss the kind of choices you can make in order to select the adequate type of representation for the type of spatial data and question you have, and the aesthethic choices that are adequate depending on the purposes and medium in which you will publish your map. But for now, we can rejoice: here is our very first crime map of the course!</p>
 </div>
