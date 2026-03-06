@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2026-02-20" />
+<meta name="date" content="2026-03-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -561,7 +561,7 @@ As a default, R will install all the dependencies for a package when we install 
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##  0.2336  0.8699  0.9365  0.9675  1.0347  2.7869</code></pre>
 <p>We can observe that the dispersion narrows significantly and that there are fewer observations with extreme values once we use this smoother.</p>
-<p>Instead of shrinking to the global relative risk, we can shrink to a relative rate based on the neighbours of each county. Shrinking to the global risk ignores the spatial dimension of the phenomenon being mapped out and may mask existing heterogeneity. If instead of shrinking to a global risk, we shrink to a local rate, we may be able to take unobserved heterogeneity into account. <span class="citation">Marshall (<a href="#ref-Marshall_1991">1991</a>)</span> proposed a local smoother estimator in which the crude rate is shrunk towards a local, “neighbourhood”, rate. To compute this, we need the list of neighbours that surround each county (we will discuss this code in Chapter 11, so for now just trust we are computing the rate of the areas that surround each country):</p>
+<p>Instead of shrinking to the global relative risk, we can shrink to a relative rate based on the neighbours of each county. Shrinking to the global risk ignores the spatial dimension of the phenomenon being mapped out and may mask existing heterogeneity. If instead of shrinking to a global risk, we shrink to a local rate, we may be able to take unobserved heterogeneity into account. <span class="citation">Marshall (<a href="#ref-Marshall_1991">1991</a>)</span> proposed a local smoother estimator in which the crude rate is shrunk towards a local, “neighbourhood”, rate. To compute this, we need the list of neighbours that surround each county (we will discuss this code in week 7, so for now just trust we are computing the rate of the areas that surround each country):</p>
 <div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="more-on-thematic-maps.html#cb255-1" tabindex="-1"></a>ncovr_sp <span class="ot">&lt;-</span> <span class="fu">as</span>(ncovr, <span class="st">&quot;Spatial&quot;</span>)</span>
 <span id="cb255-2"><a href="more-on-thematic-maps.html#cb255-2" tabindex="-1"></a>w_nb <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(ncovr, <span class="at">row.names=</span>ncovr_sp<span class="sc">$</span>FIPSNO)</span>
 <span id="cb255-3"><a href="more-on-thematic-maps.html#cb255-3" tabindex="-1"></a>eb2 <span class="ot">&lt;-</span> <span class="fu">EBlocal</span>(ncovr<span class="sc">$</span>HC60, ncovr<span class="sc">$</span>PO60, w_nb)</span>
@@ -653,17 +653,11 @@ As a default, R will install all the dependencies for a package when we install 
 <pre><code>## New names:
 ## Rows: 32162 Columns: 15
 ## ── Column specification
-## ───────────────── Delimiter: &quot;,&quot; chr
-## (8): Month, Reported.by, Falls.within,
-## Location, LSOA.code, LSOA.name, C... dbl
-## (4): ...1, X, Longitude, Latitude lgl
-## (3): Crime.ID, Last.outcome.category,
-## Context
-## ℹ Use `spec()` to retrieve the full
-## column specification for this data. ℹ
-## Specify the column types or set
-## `show_col_types = FALSE` to quiet this
-## message.
+## ──────────────────────────────────────────────────────────────────── Delimiter: &quot;,&quot; chr
+## (8): Month, Reported.by, Falls.within, Location, LSOA.code, LSOA.name, C... dbl (4): ...1,
+## X, Longitude, Latitude lgl (3): Crime.ID, Last.outcome.category, Context
+## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ Specify the
+## column types or set `show_col_types = FALSE` to quiet this message.
 ## • `` -&gt; `...1`</code></pre>
 <p>This is currently just a text dataframe, so we need to let R know that actually this is a spatial object, who’s geometry can be find in its longitude and latitude coordinates. As we have long/lat we can assure it’s in WGS 84 projection.</p>
 <div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="more-on-thematic-maps.html#cb260-1" tabindex="-1"></a>sf_mcr_asb <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(mcr_asb, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;Longitude&quot;</span>, <span class="st">&quot;Latitude&quot;</span>), </span>
@@ -827,7 +821,7 @@ aggregation.</li>
 <p>You can download the full set of EU referendum result data as a csv from <a href="https://www.electoralcommission.org.uk/find-information-by-subject/elections-and-referendums/past-elections-and-referendums/eu-referendum/eu-referendum-result-visualisations">the Electoral Commission webside</a>. Let’s read it straight into R:</p>
 <div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="more-on-thematic-maps.html#cb271-1" tabindex="-1"></a>eu_ref <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://www.electoralcommission.org.uk/sites/default/files/2019-07/EU-referendum-result-data.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 382 Columns: 21
-## ── Column specification ─────────────────
+## ── Column specification ────────────────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (4): Region_Code, Region, Area_Code, Area
 ## dbl (17): id, Electorate, ExpectedBallots, VerifiedBallotPapers, Pct_Turnout...

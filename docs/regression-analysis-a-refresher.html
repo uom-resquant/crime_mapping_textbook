@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2026-02-20" />
+<meta name="date" content="2026-03-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -531,14 +531,10 @@ Here we will return to the “ncovr” data set produced as part of the National
 <p>Imagine, however, that now when someone is called to the stage, you are told the resource deprivation level of the county, for example, the resource deprivation score = 4 and ask your expectation on the HR90 value of the country. Would you still go for the value of 4.3765352 (the median of HR90) as your best guess for the value of the selected county?</p>
 <p>I certainly would not go with the overall mean or median as my prediction anymore. If somebody said to me, the value <em>RD90</em> for the selected respondent is 4, we would be more inclined to guess the mean value for the level of homicide with that level of resource deprivation (the conditional mean), rather than the overall mean across all the counties. Wouldn’t you?</p>
 <p>If we plot the <strong>conditional means</strong> we can see that the mean of homicide rate for counties that report a value of 4 in <em>RD90</em> is around 22. So you may be better off guessing that.</p>
-<pre><code>## Warning: Using `size` aesthetic for lines was
-## deprecated in ggplot2 3.4.0.
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
-## This warning is displayed once every 8
-## hours.
-## Call
-## `lifecycle::last_lifecycle_warnings()`
-## to see where this warning was generated.</code></pre>
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
 <p><img src="crime_mapping_textbook_files/figure-html/unnamed-chunk-257-1.png" width="672" /></p>
 <p>Linear regression tackles this problem using a slightly different approach. Rather than focusing on the conditional mean (smoothed or not), it draws a straight line that tries to capture the trend in the data. If we focus in the region of the scatterplot that are less sparse we see that this is an upward trend, suggesting that as resource deprivation increases so does the homicide rate.</p>
 <p>Simple linear regression draws a single straight line of predicted values as the model for the data. This line would be a <strong>model</strong>, a <em>simplification</em> of the real world like any other model (e.g., a toy pistol, an architectural drawing, a subway map), that assumes that there is approximately a linear relationship between X and Y. Let’s draw the regression line:</p>

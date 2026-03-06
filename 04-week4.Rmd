@@ -217,7 +217,7 @@ lat_longs <- lic_prem %>% head() %>%  # here we take the first 6 observations fr
                       POSTCODE,      # the postcode and 
                       "Manchester, UK", # appends Manchester, UK to the end of it
                       sep = ", ")) %>% 
-  geocode(addr,   # use geocode function on newly created column
+  geocode(address = addr,   # use geocode function on newly created column
           method = 'osm', # use open street map method
           lat = latitude , long = longitude) # name resulting columns
 
