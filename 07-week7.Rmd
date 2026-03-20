@@ -674,7 +674,7 @@ ggplot() +
   geom_label(aes(x = 1, y = 1, label = "Lagged X > 0 and \nStandardised X > 0"), colour = "#1f78b4") + 
    geom_label(aes(x = -1, y = 1, label = "Lagged X > 0 and \nStandardised X < 0"), colour = "#b2df8a") + 
     geom_label(aes(x = -1, y = -1, label = "Lagged X < 0 and \nStandardised X < 0"), colour = "#a6cee3") + 
-  geom_label(aes(x = 1, y = -1, label = "Lagged X > 0 and \nStandardised X < 0"), colour = "#33a02c") +
+  geom_label(aes(x = 1, y = -1, label = "Lagged X < 0 and \nStandardised X > 0"), colour = "#33a02c") +
   theme_minimal() + 
   xlim(c(-2,2)) + 
   ylim(c(-2,2)) + 
