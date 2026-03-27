@@ -23,7 +23,7 @@
 <meta name="author" content="Reka Solymosi and Juanjo Medina" />
 
 
-<meta name="date" content="2026-03-20" />
+<meta name="date" content="2026-03-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -894,9 +894,8 @@ div.csl-indent {
 <span id="cb489-7"><a href="spatial-regression-models.html#cb489-7" tabindex="-1"></a>  <span class="fu">group_by</span>(lsoa21cd, month) <span class="sc">%&gt;%</span></span>
 <span id="cb489-8"><a href="spatial-regression-models.html#cb489-8" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
 <span id="cb489-9"><a href="spatial-regression-models.html#cb489-9" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by
-## &#39;lsoa21cd&#39;. You can override using
-## the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;lsoa21cd&#39;. You can
+## override using the `.groups` argument.</code></pre>
 <div class="sourceCode" id="cb491"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb491-1"><a href="spatial-regression-models.html#cb491-1" tabindex="-1"></a><span class="co"># step3: import city centre ASBs</span></span>
 <span id="cb491-2"><a href="spatial-regression-models.html#cb491-2" tabindex="-1"></a>cc_lsoas <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/cc_lsoas.geojson&quot;</span>) </span></code></pre></div>
 <pre><code>## Reading layer `cc_lsoas&#39; from data source 

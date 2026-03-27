@@ -132,14 +132,14 @@ What do you think when looking at this scatterplot? Is there a relationship betw
 Now, imagine that we play a game. Imagine we have all the respondents waiting in a room, and we randomly call one of them to the stage. You're sitting in the audience, so that might be you! Well now we ask you to guess the level of homicide (*HR90*) for a randomly chosen county in the data set. Imagine that we pay £150 to the respondent that gets the closest to the right value. What would you guess if you only have one guess and you knew (as we do) how homicide in the 90s is distributed? 
 
 ```{r}
+
 ggplot(ncovr, aes(x = HR90)) + 
   geom_density() +
   geom_vline(xintercept = median(ncovr$HR90), linetype = "dashed", linewidth = 1, color="red") + # median = 4.377
   geom_vline(xintercept = mean(ncovr$HR90), linetype = "dashed", linewidth = 1, color="blue") + # mean = 6.183
   ggtitle("Density estimate, mean and median of homicide rate 1990") +
-  theme_bw()+ 
-  xlab("Resource deprivation") + 
-  ylab("Homicide rate")
+  theme_bw()
+
 ```
 
 ```{r}
