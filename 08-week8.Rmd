@@ -132,14 +132,12 @@ What do you think when looking at this scatterplot? Is there a relationship betw
 Now, imagine that we play a game. Imagine we have all the respondents waiting in a room, and we randomly call one of them to the stage. You're sitting in the audience, so that might be you! Well now we ask you to guess the level of homicide (*HR90*) for a randomly chosen county in the data set. Imagine that we pay £150 to the respondent that gets the closest to the right value. What would you guess if you only have one guess and you knew (as we do) how homicide in the 90s is distributed? 
 
 ```{r}
-
 ggplot(ncovr, aes(x = HR90)) + 
   geom_density() +
   geom_vline(xintercept = median(ncovr$HR90), linetype = "dashed", linewidth = 1, color="red") + # median = 4.377
   geom_vline(xintercept = mean(ncovr$HR90), linetype = "dashed", linewidth = 1, color="blue") + # mean = 6.183
   ggtitle("Density estimate, mean and median of homicide rate 1990") +
   theme_bw()
-
 ```
 
 ```{r}
@@ -381,7 +379,7 @@ $$R^2 = \dfrac{SSR}{SST} = \dfrac{\Sigma(\hat y_i - \bar y )^2}{\Sigma(y_i - \ba
 
 All this formula is doing is taking a ratio of the explained variation (squared differences between the regression line and the mean of Y for each observation) by the total variation (squared differences of the observed values of Y for each observation from the mean of Y). This gives us a measure of the **percentage of variation in Y that is "explained" by X**. If this sounds familiar, it is because it is a measure similar to eta squared ($eta^2$) in ANOVA.
 
-As then we can take this value as a measure of the strength of our model. If you look at the R output, you will see that the R2 for our model was `r summary(fit_1)$r.squared` (look at the multiple R square value in the output). We can say that our model explains `r round(summary(fit_1)$r.squared*100,2)`% of the variance in the fear of homicide. When doing regression, you will often find that regression models with aggregate data such as county level data will give you better results than when dealing with individuals. It is much harder understanding individual variation than county level variation.
+As then we can take this value as a measure of the strength of our model. If you look at the R output, you will see that the R2 for our model was `r summary(fit_1)$r.squared` (look at the multiple R square value in the output). We can say that our model explains `r round(summary(fit_1)$r.squared*100,2)`% of the variance in homicide. When doing regression, you will often find that regression models with aggregate data such as county level data will give you better results than when dealing with individuals. It is much harder understanding individual variation than county level variation.
 
 As an aside, and to continue emphasising your appreciation of the object oriented nature of R, when we run the `summary()` function, we are simply generating a list object of the class summary.lm. You can extract information about your model from it. Like the R square in this case: 
 
@@ -399,7 +397,7 @@ Now then we can take this value as a measure of the strength of our model. If yo
 
 Knowing how to interpret this is important. $R^2$ ranges from 0 to 1. The greater it is the more powerful our model is, the more explaining we are doing, the better we are able to account for variation in our outcome Y with our input. In other words, the stronger the relationship is between Y and X. As with all the other measures of effect size, interpretation is a matter of judgement. You are advised to see what other researchers report in relation to the particular outcome that you may be exploring. 
 
-Weisburd and Britt (2009: 437) suggest that in criminal justice you rarely see values for $R^2$ greater than .40. Thus, if your $R^2$ is larger than .40, you can assume you have a powerful model. When, on the other hand, $R^2$ is lower than .15 or .2 the model is likely to be viewed as relatively weak. Our observed r squared here is rather poor. There is considerable room for improvement if we want to develop a better model to explain fear of violent crime[^3]. In any case, many people would argue that $R^2$ is a bit overrated. You need to be aware of what it measures and the context in which you are using it. Read [here](http://blog.minitab.com/blog/adventures-in-statistics/how-high-should-r-squared-be-in-regression-analysis) for some additional detail.
+Weisburd and Britt (2009: 437) suggest that in criminal justice you rarely see values for $R^2$ greater than .40. Thus, if your $R^2$ is larger than .40, you can assume you have a powerful model. When, on the other hand, $R^2$ is lower than .15 or .2 the model is likely to be viewed as relatively weak. Our observed r squared here is rather poor. There is considerable room for improvement if we want to develop a better model to explain homicide rate[^3]. In any case, many people would argue that $R^2$ is a bit overrated. You need to be aware of what it measures and the context in which you are using it. Read [here](http://blog.minitab.com/blog/adventures-in-statistics/how-high-should-r-squared-be-in-regression-analysis) for some additional detail.
 
 ## Inference with regression
 
@@ -468,7 +466,7 @@ As you will see the output does not look too different. But notice that in the p
 
 It turns out that a linear regression model with just one dichotomous categorical predictor is just the equivalent of a t test. When you only have one predictor the value of the intercept is the mean value of the **reference category** and the coefficient for the slope tells you how much higher (if it is positive) or how much lower (if it is negative) is the mean value for the other category in your factor.
 
-The reference category is the one for which R does not print the *level* next to the name of the variable for which it gives you the regression coefficient. Here we see that the named level is "South". That's telling you that the reference category here is "North". (We recoded this earlier, but if you skip this step you can just  look at the codebook you will see that 1 means the county is in a Southern state). Therefore the Y intercept in this case is the mean value of fear of violent crime for the northern counties, whereas the coefficient for the slope is telling you how much higher (since it is a positive value) the mean value is for the southern counties. Don't believe me?
+The reference category is the one for which R does not print the *level* next to the name of the variable for which it gives you the regression coefficient. Here we see that the named level is "South". That's telling you that the reference category here is "North". (We recoded this earlier, but if you skip this step you can just  look at the codebook you will see that 1 means the county is in a Southern state). Therefore the Y intercept in this case is the mean value of homicide rate for the northern counties, whereas the coefficient for the slope is telling you how much higher (since it is a positive value) the mean value is for the southern counties. Don't believe me?
 
 ```{r}
 mean(ncovr$HR90[ncovr$SOUTH == 0], na.rm=TRUE)
